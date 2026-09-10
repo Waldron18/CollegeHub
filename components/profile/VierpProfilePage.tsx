@@ -142,14 +142,21 @@ interface VierpInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 function VierpInput({ label, required, locked, rightElement, className, ...props }: VierpInputProps) {
   return (
-    <div className="w-full">
-      {label && (
-        <label className="block text-xs font-semibold text-[#475569] mb-1.5">
-          {label} {required && <span className="text-[#EF4444]">*</span>}
-        </label>
+    <fieldset
+      className={cn(
+        'relative rounded-lg border px-3 pb-2 pt-0.5 transition-all text-left w-full min-w-0',
+        locked
+          ? 'border-[#CBD5E1] bg-[#F1F5F9]'
+          : 'border-[#CBD5E1] bg-white focus-within:border-[#2563EB] focus-within:ring-1 focus-within:ring-[#2563EB]'
       )}
-      <div className="relative flex items-center">
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#94A3B8]">
+    >
+      {label && (
+        <legend className="px-1 text-[11px] font-semibold text-[#475569] leading-none select-none">
+          {label} {required && <span className="text-[#EF4444]">*</span>}
+        </legend>
+      )}
+      <div className="relative flex items-center min-h-[30px]">
+        <div className="pointer-events-none text-[#94A3B8] mr-2 flex-shrink-0">
           {locked ? (
             <Lock className="w-3.5 h-3.5 text-amber-600" />
           ) : (
@@ -160,27 +167,27 @@ function VierpInput({ label, required, locked, rightElement, className, ...props
           {...props}
           disabled={locked || props.disabled}
           className={cn(
-            'w-full h-10 pl-9 pr-3 rounded-lg border text-xs font-medium transition-all focus:outline-none',
+            'w-full bg-transparent border-none p-0 text-xs font-medium focus:outline-none focus:ring-0',
             locked
-              ? 'border-[#CBD5E1] bg-[#F1F5F9] text-[#64748B] font-mono cursor-not-allowed select-none'
-              : 'border-[#CBD5E1] bg-white text-[#0F172A] focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB]',
-            rightElement && 'pr-10',
+              ? 'text-[#64748B] font-mono cursor-not-allowed select-none'
+              : 'text-[#0F172A]',
+            rightElement && 'pr-6',
             className
           )}
         />
         {locked ? (
-          <div className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[9px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 pointer-events-none">
+          <div className="text-[9px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 pointer-events-none ml-2 flex-shrink-0">
             Locked
           </div>
         ) : (
           rightElement && (
-            <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
+            <div className="ml-2 flex-shrink-0">
               {rightElement}
             </div>
           )
         )}
       </div>
-    </div>
+    </fieldset>
   )
 }
 
@@ -192,28 +199,28 @@ interface VierpSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement>
 
 function VierpSelect({ label, required, children, className, ...props }: VierpSelectProps) {
   return (
-    <div className="w-full">
+    <fieldset className="relative rounded-lg border border-[#CBD5E1] bg-white px-3 pb-2 pt-0.5 transition-all text-left w-full min-w-0 focus-within:border-[#2563EB] focus-within:ring-1 focus-within:ring-[#2563EB]">
       {label && (
-        <label className="block text-xs font-semibold text-[#475569] mb-1.5">
+        <legend className="px-1 text-[11px] font-semibold text-[#475569] leading-none select-none">
           {label} {required && <span className="text-[#EF4444]">*</span>}
-        </label>
+        </legend>
       )}
-      <div className="relative flex items-center">
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#94A3B8]">
+      <div className="relative flex items-center min-h-[30px]">
+        <div className="pointer-events-none text-[#94A3B8] mr-2 flex-shrink-0">
           <List className="w-3.5 h-3.5" />
         </div>
         <select
           {...props}
           className={cn(
-            'w-full h-10 pl-9 pr-8 rounded-lg border border-[#CBD5E1] bg-white text-xs font-medium text-[#0F172A] appearance-none transition-all focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] focus:outline-none cursor-pointer',
+            'w-full bg-transparent border-none p-0 pr-6 text-xs font-medium text-[#0F172A] appearance-none focus:outline-none focus:ring-0 cursor-pointer',
             className
           )}
         >
           {children}
         </select>
-        <ChevronDown className="w-3.5 h-3.5 text-[#94A3B8] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+        <ChevronDown className="w-3.5 h-3.5 text-[#94A3B8] absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none" />
       </div>
-    </div>
+    </fieldset>
   )
 }
 
@@ -224,25 +231,25 @@ interface VierpTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaEl
 
 function VierpTextarea({ label, required, className, ...props }: VierpTextareaProps) {
   return (
-    <div className="w-full">
+    <fieldset className="relative rounded-lg border border-[#CBD5E1] bg-white px-3 pb-2 pt-0.5 transition-all text-left w-full min-w-0 focus-within:border-[#2563EB] focus-within:ring-1 focus-within:ring-[#2563EB]">
       {label && (
-        <label className="block text-xs font-semibold text-[#475569] mb-1.5">
+        <legend className="px-1 text-[11px] font-semibold text-[#475569] leading-none select-none">
           {label} {required && <span className="text-[#EF4444]">*</span>}
-        </label>
+        </legend>
       )}
-      <div className="relative">
-        <div className="absolute left-3 top-3 pointer-events-none text-[#94A3B8]">
+      <div className="relative flex items-start mt-0.5">
+        <div className="pointer-events-none text-[#94A3B8] mr-2 pt-0.5 flex-shrink-0">
           <Pencil className="w-3.5 h-3.5" />
         </div>
         <textarea
           {...props}
           className={cn(
-            'w-full pl-9 pr-3 py-2 rounded-lg border border-[#CBD5E1] bg-white text-xs font-medium text-[#0F172A] transition-all focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] focus:outline-none',
+            'w-full bg-transparent border-none p-0 text-xs font-medium text-[#0F172A] focus:outline-none focus:ring-0 resize-none',
             className
           )}
         />
       </div>
-    </div>
+    </fieldset>
   )
 }
 
@@ -851,8 +858,8 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
 
       {/* ── Screen-Only: Two-Column Interactive Layout ────────────────────────── */}
       <div className="flex flex-col md:flex-row gap-6 items-start print:hidden">
-        {/* Left Column: Pill-Shaped Vertical Rail (Tablet / Desktop: md:flex) */}
-        <aside className="hidden md:flex flex-col w-16 flex-shrink-0 bg-[#DCEEFE] p-2 rounded-2xl shadow-sm border border-[#BAE6FD] items-center justify-start gap-2">
+        {/* Left Column: Floating Pill-Shaped Vertical Rail (Tablet / Desktop: md:flex) */}
+        <aside className="hidden md:flex flex-col w-14 flex-shrink-0 rounded-full bg-[#DCEEFE] text-[#1E40AF] py-3 px-1.5 shadow-sm border border-blue-200/60 items-center justify-start gap-1.5">
           {rails.map((item, index) => {
             const Icon = item.icon
             const isActive = activeRail === item.id
@@ -866,10 +873,10 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                 }}
                 title={`${index + 1}. ${item.label}`}
                 className={cn(
-                  'w-11 h-11 rounded-xl flex items-center justify-center transition-all cursor-pointer flex-shrink-0 relative group',
+                  'w-10 h-10 flex items-center justify-center transition-all cursor-pointer flex-shrink-0 relative group rounded-full',
                   isActive
-                    ? 'bg-[#1E40AF] text-white shadow-md scale-105'
-                    : 'text-[#1E40AF] hover:bg-[#BFDBFE] hover:text-[#1E3A8A]'
+                    ? 'bg-white text-blue-700 shadow-sm rounded-full p-2'
+                    : 'text-[#1E40AF] hover:bg-[#BFDBFE]/60 hover:text-[#1E3A8A] rounded-full p-2'
                 )}
               >
                 <Icon className="w-5 h-5" />
@@ -908,7 +915,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           {activeRail === 'personal' && (
             <div className="flex-1 flex flex-col">
               {/* Top Horizontal Sub-Tabs */}
-              <div className="px-4 sm:px-6 py-2.5 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center gap-1.5 overflow-x-auto text-[11px] font-bold tracking-wider">
+              <div className="px-4 sm:px-6 pt-2 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center gap-1.5 overflow-x-auto text-[11px] tracking-wider">
                 {[
                   { id: 'personal_details', label: 'PERSONAL DETAILS' },
                   { id: 'identity', label: 'IDENTITY' },
@@ -924,10 +931,10 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                     type="button"
                     onClick={() => setPersonalSubTab(tab.id as any)}
                     className={cn(
-                      'px-3.5 py-1.5 rounded-lg whitespace-nowrap transition-all cursor-pointer font-bold',
+                      'whitespace-nowrap transition-all cursor-pointer text-[11px]',
                       personalSubTab === tab.id
-                        ? 'bg-[#2563EB] text-white shadow-xs'
-                        : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#E2E8F0]/70'
+                        ? 'bg-gradient-to-r from-[#DCEEFE] to-[#EFF6FF] text-[#1E3A8A] font-bold border-b-2 border-[#2563EB] rounded-t-lg px-4 py-2'
+                        : 'text-slate-600 hover:text-slate-900 px-4 py-2 font-medium'
                     )}
                   >
                     {tab.label}
@@ -1163,7 +1170,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           {/* ================= RAIL 2: CONTACT & ADDRESS ================= */}
           {activeRail === 'address' && (
             <div className="flex-1 flex flex-col">
-              <div className="px-4 sm:px-6 py-2.5 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center gap-1.5 overflow-x-auto text-[11px] font-bold tracking-wider">
+              <div className="px-4 sm:px-6 pt-2 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center gap-1.5 overflow-x-auto text-[11px] tracking-wider">
                 {[
                   { id: 'permanent', label: 'PERMANENT ADDRESS' },
                   { id: 'current', label: 'CURRENT ADDRESS' },
@@ -1174,10 +1181,10 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                     type="button"
                     onClick={() => setAddressSubTab(tab.id as any)}
                     className={cn(
-                      'px-3.5 py-1.5 rounded-lg whitespace-nowrap transition-all cursor-pointer font-bold',
+                      'whitespace-nowrap transition-all cursor-pointer text-[11px]',
                       addressSubTab === tab.id
-                        ? 'bg-[#2563EB] text-white shadow-xs'
-                        : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#E2E8F0]/70'
+                        ? 'bg-gradient-to-r from-[#DCEEFE] to-[#EFF6FF] text-[#1E3A8A] font-bold border-b-2 border-[#2563EB] rounded-t-lg px-4 py-2'
+                        : 'text-slate-600 hover:text-slate-900 px-4 py-2 font-medium'
                     )}
                   >
                     {tab.label}
@@ -1287,7 +1294,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           {/* ================= RAIL 3: FAMILY DETAILS ================= */}
           {activeRail === 'family' && (
             <div className="flex-1 flex flex-col">
-              <div className="px-4 sm:px-6 py-2.5 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center gap-1.5 overflow-x-auto text-[11px] font-bold tracking-wider">
+              <div className="px-4 sm:px-6 pt-2 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center gap-1.5 overflow-x-auto text-[11px] tracking-wider">
                 {[
                   { id: 'father', label: "FATHER'S DETAILS" },
                   { id: 'mother', label: "MOTHER'S DETAILS" },
@@ -1299,10 +1306,10 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                     type="button"
                     onClick={() => setFamilySubTab(tab.id as any)}
                     className={cn(
-                      'px-3.5 py-1.5 rounded-lg whitespace-nowrap transition-all cursor-pointer font-bold',
+                      'whitespace-nowrap transition-all cursor-pointer text-[11px]',
                       familySubTab === tab.id
-                        ? 'bg-[#2563EB] text-white shadow-xs'
-                        : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#E2E8F0]/70'
+                        ? 'bg-gradient-to-r from-[#DCEEFE] to-[#EFF6FF] text-[#1E3A8A] font-bold border-b-2 border-[#2563EB] rounded-t-lg px-4 py-2'
+                        : 'text-slate-600 hover:text-slate-900 px-4 py-2 font-medium'
                     )}
                   >
                     {tab.label}
@@ -1346,7 +1353,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           {/* ================= RAIL 4: EDUCATION & ACADEMICS ================= */}
           {activeRail === 'education' && (
             <div className="flex-1 flex flex-col">
-              <div className="px-4 sm:px-6 py-2.5 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center gap-1.5 overflow-x-auto text-[11px] font-bold tracking-wider">
+              <div className="px-4 sm:px-6 pt-2 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center gap-1.5 overflow-x-auto text-[11px] tracking-wider">
                 {[
                   { id: 'ssc', label: 'SSC/10TH MARKS' },
                   { id: 'hsc', label: 'HSC/12TH MARKS' },
@@ -1359,10 +1366,10 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                     type="button"
                     onClick={() => setEducationSubTab(tab.id as any)}
                     className={cn(
-                      'px-3.5 py-1.5 rounded-lg whitespace-nowrap transition-all cursor-pointer font-bold',
+                      'whitespace-nowrap transition-all cursor-pointer text-[11px]',
                       educationSubTab === tab.id
-                        ? 'bg-[#2563EB] text-white shadow-xs'
-                        : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#E2E8F0]/70'
+                        ? 'bg-gradient-to-r from-[#DCEEFE] to-[#EFF6FF] text-[#1E3A8A] font-bold border-b-2 border-[#2563EB] rounded-t-lg px-4 py-2'
+                        : 'text-slate-600 hover:text-slate-900 px-4 py-2 font-medium'
                     )}
                   >
                     {tab.label}
@@ -1544,7 +1551,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           {/* ================= RAIL 5: BANK DETAILS (LOCKED INPUTS) ================= */}
           {activeRail === 'bank' && (
             <div className="flex-1 flex flex-col">
-              <div className="px-4 sm:px-6 py-2.5 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center gap-1.5 overflow-x-auto text-[11px] font-bold tracking-wider">
+              <div className="px-4 sm:px-6 pt-2 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center gap-1.5 overflow-x-auto text-[11px] tracking-wider">
                 {[
                   { id: 'bank_info', label: 'STUDENT BANK INFORMATION' },
                   { id: 'loan', label: 'LOAN DETAILS' },
@@ -1555,10 +1562,10 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                     type="button"
                     onClick={() => setBankSubTab(tab.id as any)}
                     className={cn(
-                      'px-3.5 py-1.5 rounded-lg whitespace-nowrap transition-all cursor-pointer font-bold',
+                      'whitespace-nowrap transition-all cursor-pointer text-[11px]',
                       bankSubTab === tab.id
-                        ? 'bg-[#2563EB] text-white shadow-xs'
-                        : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#E2E8F0]/70'
+                        ? 'bg-gradient-to-r from-[#DCEEFE] to-[#EFF6FF] text-[#1E3A8A] font-bold border-b-2 border-[#2563EB] rounded-t-lg px-4 py-2'
+                        : 'text-slate-600 hover:text-slate-900 px-4 py-2 font-medium'
                     )}
                   >
                     {tab.label}
@@ -1711,15 +1718,15 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           {/* ================= RAIL 7: DOCUMENT UPLOADS ================= */}
           {activeRail === 'documents' && (
             <div className="flex-1 flex flex-col">
-              <div className="px-4 sm:px-6 py-2.5 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center gap-1.5 overflow-x-auto text-[11px] font-bold tracking-wider">
+              <div className="px-4 sm:px-6 pt-2 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center gap-1.5 overflow-x-auto text-[11px] tracking-wider">
                 <button
                   type="button"
                   onClick={() => setDocumentSubTab('verified_docs')}
                   className={cn(
-                    'px-3.5 py-1.5 rounded-lg whitespace-nowrap transition-all cursor-pointer font-bold',
+                    'whitespace-nowrap transition-all cursor-pointer text-[11px]',
                     documentSubTab === 'verified_docs'
-                      ? 'bg-[#2563EB] text-white shadow-xs'
-                      : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#E2E8F0]/70'
+                      ? 'bg-gradient-to-r from-[#DCEEFE] to-[#EFF6FF] text-[#1E3A8A] font-bold border-b-2 border-[#2563EB] rounded-t-lg px-4 py-2'
+                      : 'text-slate-600 hover:text-slate-900 px-4 py-2 font-medium'
                   )}
                 >
                   VERIFIED ADMISSION DOCUMENTS
@@ -1728,10 +1735,10 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                   type="button"
                   onClick={() => setDocumentSubTab('additional_docs')}
                   className={cn(
-                    'px-3.5 py-1.5 rounded-lg whitespace-nowrap transition-all cursor-pointer font-bold',
+                    'whitespace-nowrap transition-all cursor-pointer text-[11px]',
                     documentSubTab === 'additional_docs'
-                      ? 'bg-[#2563EB] text-white shadow-xs'
-                      : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#E2E8F0]/70'
+                      ? 'bg-gradient-to-r from-[#DCEEFE] to-[#EFF6FF] text-[#1E3A8A] font-bold border-b-2 border-[#2563EB] rounded-t-lg px-4 py-2'
+                      : 'text-slate-600 hover:text-slate-900 px-4 py-2 font-medium'
                   )}
                 >
                   ADDITIONAL ATTESTATIONS
@@ -1912,12 +1919,19 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           {/* ================= RAIL 11: PHOTOS & SIGNATURES ================= */}
           {activeRail === 'photos' && (
             <div className="p-6 flex-1 space-y-6 max-w-4xl">
-              <div className="p-4 rounded-xl bg-[#FFFBEB] border-2 border-[#FCD34D] text-[#92400E] shadow-xs">
-                <div className="flex items-center gap-2 mb-2 font-bold text-xs uppercase tracking-wide text-[#B45309]">
-                  <AlertTriangle className="w-4 h-4 text-[#D97706] flex-shrink-0" />
-                  <span>Important Instructions for Uploading Photograph</span>
+              <div className="p-4 rounded-xl bg-[#FEF9C3] border border-[#FACC15] text-[#854D0E] shadow-xs">
+                <div className="flex items-center gap-1.5 mb-2 font-bold text-xs text-[#854D0E]">
+                  <AlertTriangle className="w-4 h-4 text-[#CA8A04] flex-shrink-0" />
+                  <span>Photo Upload Instructions :</span>
+                  <button
+                    type="button"
+                    onClick={() => alert('Sample Photo Guidelines: Front-facing formal portrait with neutral expression, plain white background, and both ears visible.')}
+                    className="text-[#2563EB] hover:underline font-bold text-xs cursor-pointer inline-flex items-center gap-1"
+                  >
+                    (Sample Photo)
+                  </button>
                 </div>
-                <ul className="text-xs space-y-1.5 pl-6 list-disc font-medium">
+                <ul className="text-xs space-y-1.5 pl-6 list-disc font-medium text-[#713F12]">
                   <li>Photo Should be in .jpg/.jpeg format only.</li>
                   <li>Resolution should be W=350px, H=450px. Photo size &lt;= 500 Kb.</li>
                   <li>The photo must be taken within the last 6 months in full color.</li>

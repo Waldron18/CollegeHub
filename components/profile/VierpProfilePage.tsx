@@ -110,13 +110,13 @@ const STUDENT_RAILS: RailItem[] = [
   { id: 'undertakings', label: 'Undertakings / Circulars', icon: Bookmark },
   { id: 'bank', label: 'Bank Details', icon: Building },
   { id: 'documents', label: 'Document Uploads', icon: Upload },
-  { id: 'experience', label: 'Experience & Certificates', icon: FileText },
+  { id: 'publications', label: 'Publication Details', icon: FileText },
   { id: 'social', label: 'Social Information', icon: Camera },
   { id: 'awards', label: 'Awards & Honors', icon: Trophy },
   { id: 'activities', label: 'Extracurricular Activities', icon: Briefcase },
   { id: 'photos', label: 'Photos & Signatures', icon: Camera },
+  { id: 'antiragging', label: 'Anti Ragging Un...', icon: ShieldCheck },
   { id: 'cloud', label: 'Cloud Storage & Drive', icon: Cloud },
-  { id: 'antiragging', label: 'Anti-Ragging Compliance', icon: ShieldCheck },
   { id: 'skills', label: 'Skills & Competencies', icon: UserCheck },
 ]
 
@@ -127,6 +127,7 @@ const FACULTY_RAILS: RailItem[] = [
   { id: 'research', label: 'Research & Publications', icon: Bookmark },
   { id: 'bank', label: 'Payroll & Bank Accounts', icon: Building },
   { id: 'documents', label: 'Certificates & Documents', icon: Upload },
+  { id: 'publications', label: 'Publication Details', icon: FileText },
   { id: 'social', label: 'Social Information', icon: Camera },
   { id: 'awards', label: 'Fellowships & Awards', icon: Trophy },
   { id: 'photos', label: 'Official Photo & Sign', icon: Camera },
@@ -298,6 +299,30 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
   const [medicalList, setMedicalList] = useState<Array<{ id: string; condition: string; verifiedBy: string; year: string }>>([])
   const [additionalDocsList, setAdditionalDocsList] = useState<Array<{ id: string; title: string; type: string; uploadDate: string }>>([])
 
+  // Publication State (Rail 8)
+  const [withInstructor, setWithInstructor] = useState(false)
+  const [publicationTitle, setPublicationTitle] = useState('')
+  const [journalName, setJournalName] = useState('')
+  const [publicationYear, setPublicationYear] = useState('2024')
+  const [issnNumber, setIssnNumber] = useState('')
+
+  // Anti-Ragging Undertakings State (Rail 13)
+  const [undertakingsList, setUndertakingsList] = useState<Array<{
+    id: string
+    undertakingNo: string
+    academicYear: string
+    year: string
+    document: string
+  }>>([
+    {
+      id: 'ar-1',
+      undertakingNo: 'AR-2024-MH-948102',
+      academicYear: '2024-25',
+      year: 'FY',
+      document: 'NA',
+    },
+  ])
+
   // Modal Dialog State for Entry Additions
   const [activeModal, setActiveModal] = useState<string | null>(null)
   const [modalFields, setModalFields] = useState<{ [key: string]: string }>({})
@@ -467,6 +492,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
   const getPrimaryButtonLabel = () => {
     if (activeRail === 'family') return 'SAVE FAMILY DETAILS'
     if (activeRail === 'bank') return 'SAVE BANK DETAILS'
+    if (activeRail === 'publications') return 'SAVE PUBLICATION DETAILS'
     if (activeRail === 'social') return 'SAVE SOCIAL DETAILS'
     if (activeRail === 'personal' && personalSubTab === 'examination') return 'SAVE DETAILS'
     const currentIndex = rails.findIndex((r) => r.id === activeRail)
@@ -723,32 +749,28 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
       </div>
 
       {/* ── Screen-Only: Top Sub-Navigation Bar ───────────────────────────────── */}
-      <div className="flex items-center justify-between py-3 px-1 mb-4 border-b border-[#E2E8F0] print:hidden">
+      <div className="flex items-center justify-between py-2.5 px-1 mb-4 border-b border-[#E2E8F0] print:hidden">
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-xs sm:text-sm text-[#64748B]">
+        <div className="flex items-center gap-1.5 text-xs text-slate-500">
           <button
             type="button"
             onClick={() => onNavigate?.('home')}
-            className="hover:text-[#0D9488] font-medium transition-colors cursor-pointer"
+            className="hover:text-blue-600 transition-colors cursor-pointer"
           >
             Home
           </button>
-          <span className="text-[#CBD5E1]">/</span>
-          <span className="text-[#0F172A] font-semibold">Profile</span>
-          <span className="text-[#CBD5E1]">/</span>
-          <span className="text-[#0D9488] font-medium">
-            {rails.find((r) => r.id === activeRail)?.label}
-          </span>
+          <span className="text-slate-300">/</span>
+          <span className="text-slate-700 font-medium">Profile</span>
         </div>
 
-        {/* Action Button: Amber Print Profile Details */}
+        {/* Action Button: Amber Rectangular Print Profile Details */}
         <button
           type="button"
           onClick={() => window.print()}
           title="Print official VIERP profile dossier"
-          className="bg-[#F59E0B] hover:bg-[#D97706] text-white font-semibold px-4 py-1.5 rounded-md text-xs sm:text-sm flex items-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-95"
+          className="bg-[#FF9800] hover:bg-[#F57C00] text-white text-xs font-bold px-3 py-1.5 rounded-sm shadow-xs flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
         >
-          <Printer className="w-4 h-4" />
+          <Printer className="w-3.5 h-3.5" />
           <span>PROFILE DETAILS</span>
         </button>
       </div>
@@ -883,7 +905,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                 className={cn(
                   'w-10 h-10 flex items-center justify-center transition-all cursor-pointer flex-shrink-0 relative group rounded-full',
                   isActive
-                    ? 'bg-white text-blue-700 shadow-sm rounded-full p-2'
+                    ? 'bg-white text-blue-700 shadow-xs rounded-full p-2'
                     : 'text-[#1E40AF] hover:bg-[#BFDBFE]/60 hover:text-[#1E3A8A] rounded-full p-2'
                 )}
               >
@@ -923,7 +945,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           {activeRail === 'personal' && (
             <div className="flex-1 flex flex-col">
               {/* Top Horizontal Sub-Tabs */}
-              <div className="rounded-t-xl bg-[#E8EFFE]/70 p-1 flex items-center gap-1 overflow-x-auto border-b border-blue-100">
+              <div className="rounded-t-2xl border border-b-0 border-[#BFDBFE] bg-gradient-to-r from-[#BFDBFE] via-[#DBEAFE] to-[#EFF6FF] p-1 flex items-center gap-1 overflow-x-auto">
                 {[
                   { id: 'personal_details', label: 'PERSONAL DETAILS' },
                   { id: 'identity', label: 'IDENTITY' },
@@ -940,8 +962,8 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                     onClick={() => setPersonalSubTab(tab.id as any)}
                     className={cn(
                       personalSubTab === tab.id
-                        ? 'bg-white text-slate-900 font-bold px-4 py-2 text-xs rounded-t-lg shadow-xs whitespace-nowrap'
-                        : 'text-slate-600 hover:text-slate-800 px-4 py-2 text-xs font-medium whitespace-nowrap'
+                        ? 'bg-white text-[#0F172A] rounded-t-xl font-extrabold px-4 py-2.5 text-[11px] tracking-wide whitespace-nowrap shadow-none'
+                        : 'text-[#1E3A8A] text-[11px] font-bold tracking-wide uppercase px-4 py-2.5 whitespace-nowrap'
                     )}
                   >
                     {tab.label}
@@ -1181,7 +1203,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           {/* ================= RAIL 2: CONTACT & ADDRESS ================= */}
           {activeRail === 'address' && (
             <div className="flex-1 flex flex-col">
-              <div className="rounded-t-xl bg-[#E8EFFE]/70 p-1 flex items-center gap-1 overflow-x-auto border-b border-blue-100">
+              <div className="rounded-t-2xl border border-b-0 border-[#BFDBFE] bg-gradient-to-r from-[#BFDBFE] via-[#DBEAFE] to-[#EFF6FF] p-1 flex items-center gap-1 overflow-x-auto">
                 {[
                   { id: 'permanent', label: 'PERMANENT ADDRESS' },
                   { id: 'current', label: 'CURRENT ADDRESS' },
@@ -1193,8 +1215,8 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                     onClick={() => setAddressSubTab(tab.id as any)}
                     className={cn(
                       addressSubTab === tab.id
-                        ? 'bg-white text-slate-900 font-bold px-4 py-2 text-xs rounded-t-lg shadow-xs whitespace-nowrap'
-                        : 'text-slate-600 hover:text-slate-800 px-4 py-2 text-xs font-medium whitespace-nowrap'
+                        ? 'bg-white text-[#0F172A] rounded-t-xl font-extrabold px-4 py-2.5 text-[11px] tracking-wide whitespace-nowrap shadow-none'
+                        : 'text-[#1E3A8A] text-[11px] font-bold tracking-wide uppercase px-4 py-2.5 whitespace-nowrap'
                     )}
                   >
                     {tab.label}
@@ -1304,7 +1326,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           {/* ================= RAIL 3: FAMILY DETAILS ================= */}
           {activeRail === 'family' && (
             <div className="flex-1 flex flex-col">
-              <div className="rounded-t-xl bg-[#E8EFFE]/70 p-1 flex items-center gap-1 overflow-x-auto border-b border-blue-100">
+              <div className="rounded-t-2xl border border-b-0 border-[#BFDBFE] bg-gradient-to-r from-[#BFDBFE] via-[#DBEAFE] to-[#EFF6FF] p-1 flex items-center gap-1 overflow-x-auto">
                 {[
                   { id: 'father', label: "FATHER'S DETAILS" },
                   { id: 'mother', label: "MOTHER'S DETAILS" },
@@ -1317,8 +1339,8 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                     onClick={() => setFamilySubTab(tab.id as any)}
                     className={cn(
                       familySubTab === tab.id
-                        ? 'bg-white text-slate-900 font-bold px-4 py-2 text-xs rounded-t-lg shadow-xs whitespace-nowrap'
-                        : 'text-slate-600 hover:text-slate-800 px-4 py-2 text-xs font-medium whitespace-nowrap'
+                        ? 'bg-white text-[#0F172A] rounded-t-xl font-extrabold px-4 py-2.5 text-[11px] tracking-wide whitespace-nowrap shadow-none'
+                        : 'text-[#1E3A8A] text-[11px] font-bold tracking-wide uppercase px-4 py-2.5 whitespace-nowrap'
                     )}
                   >
                     {tab.label}
@@ -1362,7 +1384,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           {/* ================= RAIL 4: EDUCATION & ACADEMICS ================= */}
           {activeRail === 'education' && (
             <div className="flex-1 flex flex-col">
-              <div className="rounded-t-xl bg-[#E8EFFE]/70 p-1 flex items-center gap-1 overflow-x-auto border-b border-blue-100">
+              <div className="rounded-t-2xl border border-b-0 border-[#BFDBFE] bg-gradient-to-r from-[#BFDBFE] via-[#DBEAFE] to-[#EFF6FF] p-1 flex items-center gap-1 overflow-x-auto">
                 {[
                   { id: 'ssc', label: 'SSC/10TH MARKS' },
                   { id: 'hsc', label: 'HSC/12TH MARKS' },
@@ -1376,8 +1398,8 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                     onClick={() => setEducationSubTab(tab.id as any)}
                     className={cn(
                       educationSubTab === tab.id
-                        ? 'bg-white text-slate-900 font-bold px-4 py-2 text-xs rounded-t-lg shadow-xs whitespace-nowrap'
-                        : 'text-slate-600 hover:text-slate-800 px-4 py-2 text-xs font-medium whitespace-nowrap'
+                        ? 'bg-white text-[#0F172A] rounded-t-xl font-extrabold px-4 py-2.5 text-[11px] tracking-wide whitespace-nowrap shadow-none'
+                        : 'text-[#1E3A8A] text-[11px] font-bold tracking-wide uppercase px-4 py-2.5 whitespace-nowrap'
                     )}
                   >
                     {tab.label}
@@ -1559,7 +1581,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           {/* ================= RAIL 5: BANK DETAILS (LOCKED INPUTS) ================= */}
           {activeRail === 'bank' && (
             <div className="flex-1 flex flex-col">
-              <div className="rounded-t-xl bg-[#E8EFFE]/70 p-1 flex items-center gap-1 overflow-x-auto border-b border-blue-100">
+              <div className="rounded-t-2xl border border-b-0 border-[#BFDBFE] bg-gradient-to-r from-[#BFDBFE] via-[#DBEAFE] to-[#EFF6FF] p-1 flex items-center gap-1 overflow-x-auto">
                 {[
                   { id: 'bank_info', label: 'STUDENT BANK INFORMATION' },
                   { id: 'loan', label: 'LOAN DETAILS' },
@@ -1571,8 +1593,8 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                     onClick={() => setBankSubTab(tab.id as any)}
                     className={cn(
                       bankSubTab === tab.id
-                        ? 'bg-white text-slate-900 font-bold px-4 py-2 text-xs rounded-t-lg shadow-xs whitespace-nowrap'
-                        : 'text-slate-600 hover:text-slate-800 px-4 py-2 text-xs font-medium whitespace-nowrap'
+                        ? 'bg-white text-[#0F172A] rounded-t-xl font-extrabold px-4 py-2.5 text-[11px] tracking-wide whitespace-nowrap shadow-none'
+                        : 'text-[#1E3A8A] text-[11px] font-bold tracking-wide uppercase px-4 py-2.5 whitespace-nowrap'
                     )}
                   >
                     {tab.label}
@@ -1725,14 +1747,14 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           {/* ================= RAIL 7: DOCUMENT UPLOADS ================= */}
           {activeRail === 'documents' && (
             <div className="flex-1 flex flex-col">
-              <div className="rounded-t-xl bg-[#E8EFFE]/70 p-1 flex items-center gap-1 overflow-x-auto border-b border-blue-100">
+              <div className="rounded-t-2xl border border-b-0 border-[#BFDBFE] bg-gradient-to-r from-[#BFDBFE] via-[#DBEAFE] to-[#EFF6FF] p-1 flex items-center gap-1 overflow-x-auto">
                 <button
                   type="button"
                   onClick={() => setDocumentSubTab('verified_docs')}
                   className={cn(
                     documentSubTab === 'verified_docs'
-                      ? 'bg-white text-slate-900 font-bold px-4 py-2 text-xs rounded-t-lg shadow-xs whitespace-nowrap'
-                      : 'text-slate-600 hover:text-slate-800 px-4 py-2 text-xs font-medium whitespace-nowrap'
+                      ? 'bg-white text-[#0F172A] rounded-t-xl font-extrabold px-4 py-2.5 text-[11px] tracking-wide whitespace-nowrap shadow-none'
+                      : 'text-[#1E3A8A] text-[11px] font-bold tracking-wide uppercase px-4 py-2.5 whitespace-nowrap'
                   )}
                 >
                   VERIFIED ADMISSION DOCUMENTS
@@ -1742,8 +1764,8 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                   onClick={() => setDocumentSubTab('additional_docs')}
                   className={cn(
                     documentSubTab === 'additional_docs'
-                      ? 'bg-white text-slate-900 font-bold px-4 py-2 text-xs rounded-t-lg shadow-xs whitespace-nowrap'
-                      : 'text-slate-600 hover:text-slate-800 px-4 py-2 text-xs font-medium whitespace-nowrap'
+                      ? 'bg-white text-[#0F172A] rounded-t-xl font-extrabold px-4 py-2.5 text-[11px] tracking-wide whitespace-nowrap shadow-none'
+                      : 'text-[#1E3A8A] text-[11px] font-bold tracking-wide uppercase px-4 py-2.5 whitespace-nowrap'
                   )}
                 >
                   ADDITIONAL ATTESTATIONS
@@ -1834,10 +1856,121 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
             </div>
           )}
 
-          {/* ================= RAIL 8: EXPERIENCE ================= */}
-          {activeRail === 'experience' && (
-            <div className="p-6 flex-1">
-              {renderEmptyState('Internships & Prior Professional Experience', '+ EXPERIENCE', 'EXPERIENCE')}
+          {/* ================= RAIL 8: PUBLICATION DETAILS ================= */}
+          {(activeRail === 'publications' || activeRail === 'experience') && (
+            <div className="p-6 flex-1 flex flex-col justify-between">
+              <div className="space-y-6 max-w-4xl">
+                {/* Header */}
+                <div className="border-b border-[#E2E8F0] pb-3 flex items-center justify-between">
+                  <div>
+                    <h3 className="text-sm font-bold text-[#0F172A]">Publication Details</h3>
+                    <p className="text-xs text-[#64748B] mt-0.5">
+                      (Note: Fields marked with <span className="text-red-500 font-bold">*</span> are required.)
+                    </p>
+                  </div>
+                  <div className="text-[11px] font-medium text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Academic Research Portal</span>
+                  </div>
+                </div>
+
+                {/* Checkbox: With Instructor */}
+                <div className="flex items-center gap-2.5 bg-[#F8FAFC] border border-[#E2E8F0] p-3 rounded-xl">
+                  <input
+                    type="checkbox"
+                    id="withInstructor"
+                    checked={withInstructor}
+                    onChange={(e) => setWithInstructor(e.target.checked)}
+                    className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 cursor-pointer"
+                  />
+                  <label htmlFor="withInstructor" className="text-xs font-semibold text-[#0F172A] cursor-pointer select-none">
+                    With Instructor : <span className="text-slate-500 font-normal">Check if publication is co-authored with faculty guide</span>
+                  </label>
+                </div>
+
+                {/* Form fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <VierpInput
+                    label="Publication Title"
+                    required
+                    placeholder="Enter full research paper title"
+                    value={publicationTitle}
+                    onChange={(e) => setPublicationTitle(e.target.value)}
+                  />
+                  <VierpInput
+                    label="Journal / Conference Name"
+                    required
+                    placeholder="e.g. IEEE Transactions on Cloud Computing"
+                    value={journalName}
+                    onChange={(e) => setJournalName(e.target.value)}
+                  />
+                  <VierpInput
+                    label="Publication Year"
+                    required
+                    type="number"
+                    value={publicationYear}
+                    onChange={(e) => setPublicationYear(e.target.value)}
+                  />
+                  <VierpInput
+                    label="ISSN / ISBN Number"
+                    placeholder="e.g. ISSN 2168-7161"
+                    value={issnNumber}
+                    onChange={(e) => setIssnNumber(e.target.value)}
+                  />
+                </div>
+
+                {/* Read-only Student Author Table */}
+                <div className="space-y-2 pt-1">
+                  <span className="text-xs font-bold text-[#0F172A] block">
+                    Author Attribution Ledger (Primary Submitter)
+                  </span>
+                  <div className="border border-[#E2E8F0] rounded-xl overflow-hidden shadow-xs">
+                    <table className="w-full text-xs text-left">
+                      <thead className="bg-[#F8FAFC] text-[#475569] font-bold border-b border-[#E2E8F0]">
+                        <tr>
+                          <th className="p-3">Author Type</th>
+                          <th className="p-3">Author Identification / Name</th>
+                          <th className="p-3 text-right">Attribution Role</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[#E2E8F0] bg-white">
+                        <tr>
+                          <td className="p-3 font-semibold text-blue-700">
+                            {isFaculty ? 'Faculty' : 'Student'}
+                          </td>
+                          <td className="p-3 font-mono font-bold text-[#0F172A]">
+                            {isFaculty ? 'EMP-CE-402:KULKARNI RAJESH' : '22110482:SHARMA ADITYA'}
+                          </td>
+                          <td className="p-3 text-right text-[#059669] font-medium">
+                            First Author (Verified)
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Blue SAVE Button */}
+                <div className="pt-2 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => handleSave('Publication Details')}
+                    disabled={isSaving}
+                    className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-bold px-6 py-2.5 rounded-lg shadow-sm hover:shadow-md transition-all flex items-center gap-2 cursor-pointer active:scale-95 disabled:opacity-60"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>{isSaving ? 'SAVING...' : 'SAVE'}</span>
+                  </button>
+                </div>
+
+                {/* Below card: Red callout box with 'X' icon: "No Publication Details Found." */}
+                <div className="p-3.5 rounded-xl bg-[#FEF2F2] border border-[#FCA5A5] text-[#991B1B] text-xs font-semibold flex items-center gap-3 shadow-xs">
+                  <div className="w-5 h-5 rounded-full bg-[#EF4444] text-white flex items-center justify-center flex-shrink-0">
+                    <X className="w-3.5 h-3.5 stroke-[2.5]" />
+                  </div>
+                  <span>No Publication Details Found.</span>
+                </div>
+              </div>
             </div>
           )}
 
@@ -1884,7 +2017,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                     onChange={(e) => handleChange('instagramLink', e.target.value)}
                   />
                   <VierpInput
-                    label="Scholar Link"
+                    label="Google Scholar Link"
                     placeholder="https://scholar.google.com/citations?user=..."
                     value={formData.scholarLink}
                     onChange={(e) => handleChange('scholarLink', e.target.value)}
@@ -2216,22 +2349,91 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
             </div>
           )}
 
-          {/* ================= RAIL 13: ANTI-RAGGING ================= */}
+          {/* ================= RAIL 13: ANTI-RAGGING UNDERTAKING ================= */}
           {activeRail === 'antiragging' && (
-            <div className="p-6 flex-1 space-y-4 max-w-2xl">
-              <h3 className="text-sm font-bold text-[#0F172A]">Anti-Ragging Undertaking Status</h3>
-              <div className="p-5 rounded-2xl bg-[#ECFDF5] border border-[#A7F3D0] space-y-3">
-                <div className="flex items-center gap-3">
-                  <ShieldCheck className="w-6 h-6 text-[#059669]" />
-                  <div>
-                    <span className="text-sm font-bold text-[#065F46] block">Compliance Certificate Active</span>
-                    <span className="text-xs text-[#047857] block">Academic Year 2024–25 Verified</span>
-                  </div>
+            <div className="p-6 flex-1 space-y-5 max-w-4xl">
+              {/* Header */}
+              <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0]">
+                <div>
+                  <h3 className="text-sm font-bold text-[#0F172A]">Anti Ragging Un...</h3>
+                  <p className="text-xs text-[#64748B] mt-0.5">
+                    Mandatory National Anti-Ragging Affidavit Records (UGC Regulations)
+                  </p>
                 </div>
-                <div className="text-xs text-[#065F46] pt-2 border-t border-[#A7F3D0]/60 space-y-1">
-                  <p>National Anti-Ragging Reference: <strong>AR-2024-MH-948102</strong></p>
-                  <p>Affidavit submission confirmed by SPPU Grievance & Student Welfare Committee.</p>
-                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newUndertaking = {
+                      id: `ar-${Date.now()}`,
+                      undertakingNo: `AR-2024-MH-${Math.floor(100000 + Math.random() * 900000)}`,
+                      academicYear: '2024-25',
+                      year: 'TE',
+                      document: 'NA',
+                    }
+                    setUndertakingsList((prev) => [...prev, newUndertaking])
+                    setToastMsg('New Anti-Ragging Undertaking record generated.')
+                    setTimeout(() => setToastMsg(null), 3500)
+                  }}
+                  className="px-3.5 py-2 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-95"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>+ ADD UNDERTAKING</span>
+                </button>
+              </div>
+
+              {/* Ledger Table */}
+              <div className="border border-[#E2E8F0] rounded-xl overflow-hidden shadow-xs">
+                <table className="w-full text-xs text-left">
+                  <thead className="bg-[#F8FAFC] text-[#475569] font-bold border-b border-[#E2E8F0]">
+                    <tr>
+                      <th className="p-3">Undertaking Number</th>
+                      <th className="p-3">Academic Year</th>
+                      <th className="p-3">Year</th>
+                      <th className="p-3 text-center">Document</th>
+                      <th className="p-3 text-right">Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#E2E8F0] bg-white">
+                    {undertakingsList.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="p-6 text-center text-[#64748B]">
+                          No active undertakings registered. Click &quot;+ ADD UNDERTAKING&quot; above.
+                        </td>
+                      </tr>
+                    ) : (
+                      undertakingsList.map((item) => (
+                        <tr key={item.id} className="hover:bg-[#F8FAFC] transition-colors">
+                          <td className="p-3 font-mono font-bold text-[#0F172A] flex items-center gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                            <span>{item.undertakingNo}</span>
+                          </td>
+                          <td className="p-3 font-medium text-[#334155]">{item.academicYear}</td>
+                          <td className="p-3 font-semibold text-[#0F172A]">{item.year}</td>
+                          <td className="p-3 text-center">
+                            <span className="inline-block px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-mono text-[11px]">
+                              {item.document}
+                            </span>
+                          </td>
+                          <td className="p-3 text-right">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setUndertakingsList((prev) => prev.filter((u) => u.id !== item.id))
+                                setToastMsg('Undertaking record removed.')
+                                setTimeout(() => setToastMsg(null), 3500)
+                              }}
+                              className="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50 transition-colors cursor-pointer"
+                              title="Delete Undertaking"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
@@ -2373,48 +2575,41 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
         </main>
       </div>
 
-      {/* ── Floating Support & Provider Footer ─────────────────────────────────── */}
-      <footer className="mt-8 border-t border-[#E2E8F0] bg-[#F8FAFC] py-4 px-6 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#64748B] print:hidden shadow-xs">
-        {/* Left: Green Pill (?) Support Button */}
+      {/* ── Docked Institutional Footer (Solid Blue Bar) ─────────────────────────── */}
+      <footer className="mt-8 bg-[#1E40AF] text-white py-2.5 px-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3 text-xs print:hidden shadow-md">
+        {/* Left: Green rounded pill (?) Support */}
         <button
           type="button"
           onClick={() => setIsSupportModalOpen(true)}
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] hover:bg-[#D1FAE5] text-[#065F46] font-bold transition-all cursor-pointer shadow-xs active:scale-95"
+          className="bg-[#059669] hover:bg-[#047857] text-white text-xs font-bold rounded-full px-3 py-1.5 inline-flex items-center gap-1.5 shadow-xs transition-all cursor-pointer active:scale-95"
         >
-          <HelpCircle className="w-4 h-4 text-[#059669]" />
+          <HelpCircle className="w-3.5 h-3.5 text-white" />
           <span>(?) Support</span>
         </button>
 
-        {/* Center: Powered By eduplus */}
-        <div className="flex items-center gap-2">
-          <span className="font-semibold text-[#0F172A]">
-            Powered By <span className="text-[#2563EB] font-extrabold tracking-tight">eduplus</span>
-          </span>
+        {/* Center: White text "Powered By eduplus" */}
+        <div className="flex items-center gap-1 text-white font-medium">
+          <span>Powered By</span>
+          <span className="font-extrabold tracking-tight">eduplus</span>
         </div>
 
-        {/* Right: University Social Icons & Version */}
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2.5 text-[#94A3B8]">
-            <a href="https://youtube.com" target="_blank" rel="noreferrer" title="VIIT YouTube Channel" className="hover:text-[#EF4444] transition-colors">
-              <YoutubeIcon className="w-4 h-4" />
-            </a>
-            <a href="https://facebook.com" target="_blank" rel="noreferrer" title="VIIT Facebook" className="hover:text-[#1877F2] transition-colors">
-              <FacebookIcon className="w-4 h-4" />
-            </a>
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" title="VIIT Instagram" className="hover:text-[#E4405F] transition-colors">
-              <InstagramIcon className="w-4 h-4" />
-            </a>
-            <a href="https://x.com" target="_blank" rel="noreferrer" title="VIIT Twitter/X" className="hover:text-[#0F172A] transition-colors">
-              <TwitterIcon className="w-4 h-4" />
-            </a>
-            <a href="https://linkedin.com" target="_blank" rel="noreferrer" title="VIIT LinkedIn" className="hover:text-[#0A66C2] transition-colors">
-              <LinkedinIcon className="w-4 h-4" />
-            </a>
-          </div>
-          <span className="text-[#CBD5E1] hidden md:inline">|</span>
-          <span className="text-[11px] font-mono text-[#94A3B8] hidden md:inline">
-            v4.8 • SPPU Pune
-          </span>
+        {/* Right: White circular social icons */}
+        <div className="flex items-center gap-2.5 text-white">
+          <a href="https://youtube.com" target="_blank" rel="noreferrer" title="YouTube" className="w-6 h-6 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors">
+            <YoutubeIcon className="w-3.5 h-3.5 text-white" />
+          </a>
+          <a href="https://facebook.com" target="_blank" rel="noreferrer" title="Facebook" className="w-6 h-6 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors">
+            <FacebookIcon className="w-3.5 h-3.5 text-white" />
+          </a>
+          <a href="https://instagram.com" target="_blank" rel="noreferrer" title="Instagram" className="w-6 h-6 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors">
+            <InstagramIcon className="w-3.5 h-3.5 text-white" />
+          </a>
+          <a href="https://x.com" target="_blank" rel="noreferrer" title="Twitter/X" className="w-6 h-6 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors">
+            <TwitterIcon className="w-3.5 h-3.5 text-white" />
+          </a>
+          <a href="https://linkedin.com" target="_blank" rel="noreferrer" title="LinkedIn" className="w-6 h-6 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors">
+            <LinkedinIcon className="w-3.5 h-3.5 text-white" />
+          </a>
         </div>
       </footer>
 

@@ -376,7 +376,7 @@ export default function Header({ currentTime, profile, onNavigate }: HeaderProps
           >
             <Menu className="w-5 h-5" />
           </button>
-          <div className="w-7 h-7 rounded-lg bg-[#1E3A8A] text-white flex items-center justify-center font-bold text-xs shadow-xs">
+          <div className="w-7 h-7 rounded-lg bg-[#002B9A] text-white flex items-center justify-center font-bold text-xs shadow-sm">
             <Shield className="w-4 h-4 text-white" />
           </div>
         </div>
@@ -423,11 +423,9 @@ export default function Header({ currentTime, profile, onNavigate }: HeaderProps
         </div>
       </div>
 
-      {/* Center: Subtle lightning bolt accent icon */}
+      {/* Center: Naked amber lightning bolt glyph (Zap without background pill or border) */}
       <div className="flex items-center justify-center flex-shrink-0">
-        <div className="w-7 h-7 rounded-full bg-amber-50 border border-amber-200/70 flex items-center justify-center shadow-2xs">
-          <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-        </div>
+        <Zap className="w-5 h-5 text-[#F59E0B] fill-[#F59E0B]" />
       </div>
 
       {/* Right: Controls */}
@@ -736,7 +734,7 @@ export default function Header({ currentTime, profile, onNavigate }: HeaderProps
           >
             {/* Avatar Circle with Online Dot */}
             <div className="relative flex-shrink-0">
-              <div className="w-6.5 h-6.5 rounded-full bg-[#1E3A8A] flex items-center justify-center text-white text-[10px] font-bold shadow-2xs">
+              <div className="w-6.5 h-6.5 rounded-full bg-[#002B9A] flex items-center justify-center text-white font-bold text-xs shadow-sm">
                 {initials}
               </div>
               <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#10B981] border-2 border-white ring-1 ring-emerald-500/30" />

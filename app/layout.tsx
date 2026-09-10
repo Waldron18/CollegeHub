@@ -1,9 +1,26 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import './globals.css'
+import PwaRegistration from '@/components/common/PwaRegistration'
 
 export const metadata: Metadata = {
   title: 'CollegeHub — Academic OS',
   description: 'VIIT Pune Academic Operating System & Collaboration Hub',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'CollegeHub',
+  },
+  icons: {
+    icon: '/icons/icon-192.png',
+    apple: '/icons/icon-192.png',
+  },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#1E3A8A',
+  width: 'device-width',
+  initialScale: 1,
 }
 
 export default function RootLayout({
@@ -22,8 +39,10 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
+        <PwaRegistration />
         {children}
       </body>
     </html>
   )
 }
+

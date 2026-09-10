@@ -25,6 +25,7 @@ import {
   Menu,
   Zap,
   Shield,
+  WifiOff,
 } from 'lucide-react'
 import type { StudentProfile } from '@/types/dashboard'
 import type { ActiveView } from '@/components/Sidebar'
@@ -187,7 +188,23 @@ export default function Header({ currentTime, profile, onNavigate }: HeaderProps
   const [notifications, setNotifications] = useState<AcademicNotification[]>(initialNotifications)
   const [realtimeToast, setRealtimeToast] = useState<{ title: string; message: string } | null>(null)
   const connectionStatus = useRealtimeConnection()
+  const [isOnline, setIsOnline] = useState(true)
   const popoverRef = useRef<HTMLDivElement>(null)
+
+  // Track browser online/offline status
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsOnline(navigator.onLine)
+      const handleOnline = () => setIsOnline(true)
+      const handleOffline = () => setIsOnline(false)
+      window.addEventListener('online', handleOnline)
+      window.addEventListener('offline', handleOffline)
+      return () => {
+        window.removeEventListener('online', handleOnline)
+        window.removeEventListener('offline', handleOffline)
+      }
+    }
+  }, [])
 
   // Real-time SSE Notification listener
   useRealtimeNotification((payload: NotificationPayload) => {
@@ -414,6 +431,20 @@ export default function Header({ currentTime, profile, onNavigate }: HeaderProps
 
       {/* Right: Controls */}
       <div className="flex items-center gap-2 flex-shrink-0">
+        {/* Offline Status Indicator Pill */}
+        {!isOnline && (
+          <div
+            data-testid="offline-status-pill"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-300/80 text-[11px] font-semibold animate-pulse shadow-xs"
+            title="Application is currently operating in offline cached mode"
+          >
+            <span className="w-2 h-2 rounded-full bg-amber-500 ring-2 ring-amber-200" />
+            <WifiOff className="w-3.5 h-3.5 text-amber-600" />
+            <span className="hidden sm:inline">Network: Offline (Viewing Cached Data)</span>
+            <span className="sm:hidden">Offline (Cached)</span>
+          </div>
+        )}
+
         {/* Global Search */}
         <div className="relative flex items-center hidden sm:flex">
           <Search className="absolute left-2.5 w-3.5 h-3.5 text-[#94A3B8] pointer-events-none" />

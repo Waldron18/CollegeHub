@@ -22,6 +22,9 @@ import {
   CreditCard,
   LogOut,
   ChevronDown,
+  Menu,
+  Zap,
+  Shield,
 } from 'lucide-react'
 import type { StudentProfile } from '@/types/dashboard'
 import type { ActiveView } from '@/components/Sidebar'
@@ -318,45 +321,69 @@ export default function Header({ currentTime, profile, onNavigate }: HeaderProps
   const semStr = profile?.semester ? `Sem ${profile.semester}` : 'Sem 5'
 
   return (
-    <header className="fixed top-0 left-60 right-0 h-14 bg-white/90 backdrop-blur-xl border-b border-[#E2E8F0] z-40 flex items-center justify-between px-6 shadow-[0_1px_4px_rgba(15,23,42,0.04)] print:hidden">
-      {/* Left: Two-line Hierarchical Greeting */}
-      <div className="flex flex-col justify-center min-w-0">
-        {/* Line 1: Bold, prominent greeting + calendar date */}
-        <div className="flex items-center gap-2.5">
-          <h2 className="text-sm font-bold text-[#0F172A] tracking-tight leading-tight truncate">
-            {profile?.role === 'ADMIN'
-              ? `${greeting}, Administrator`
-              : profile?.role === 'FACULTY'
-              ? `${greeting}, ${profile?.name || 'Prof. Rajesh Kulkarni'}`
-              : `${greeting}, ${firstName}`}
-          </h2>
-          <span className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#F1F5F9] text-[#475569] text-[11px] font-medium border border-[#E2E8F0]/60">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#0D9488] animate-pulse" />
-            {dateStr}
-          </span>
+    <header className="fixed top-0 left-0 md:left-60 right-0 h-14 bg-white/90 backdrop-blur-xl border-b border-[#E2E8F0] z-40 flex items-center justify-between px-4 sm:px-6 shadow-[0_1px_4px_rgba(15,23,42,0.04)] print:hidden">
+      {/* Left: Mobile Toggle / Crest + Two-line Hierarchical Greeting */}
+      <div className="flex items-center gap-3 min-w-0">
+        {/* Mobile Institutional Crest & Menu Toggle */}
+        <div className="flex items-center gap-1.5 md:hidden flex-shrink-0">
+          <button
+            type="button"
+            className="p-1.5 rounded-lg text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] transition-colors cursor-pointer"
+            title="Navigation Menu"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+          <div className="w-7 h-7 rounded-lg bg-[#1E3A8A] text-white flex items-center justify-center font-bold text-xs shadow-xs">
+            <Shield className="w-4 h-4 text-white" />
+          </div>
         </div>
 
-        {/* Line 2: Subtle, secondary academic details */}
-        <div className="flex items-center gap-1.5 text-[11px] text-[#64748B] leading-tight mt-0.5 truncate">
-          {profile?.role === 'ADMIN' ? (
-            <span>Registrar Office • Institutional Governance & Circulars • AY 2024–25</span>
-          ) : profile?.role === 'FACULTY' ? (
-            <span>
-              Dept of {profile?.department || 'Computer Engineering'} • Cabin 412 • EMP-CE-402 • AY 2024–25
+        {/* Two-line Hierarchical Greeting */}
+        <div className="flex flex-col justify-center min-w-0">
+          {/* Line 1: Bold, prominent greeting + calendar date */}
+          <div className="flex items-center gap-2.5">
+            <h2 className="text-xs sm:text-sm font-bold text-[#0F172A] tracking-tight leading-tight truncate">
+              {profile?.role === 'ADMIN'
+                ? `${greeting}, Administrator`
+                : profile?.role === 'FACULTY'
+                ? `${greeting}, ${profile?.name || 'Prof. Rajesh Kulkarni'}`
+                : `${greeting}, ${firstName}`}
+            </h2>
+            <span className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#F1F5F9] text-[#475569] text-[11px] font-medium border border-[#E2E8F0]/60">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#0D9488] animate-pulse" />
+              {dateStr}
             </span>
-          ) : (
-            <div className="flex items-center gap-1.5">
-              <span className="font-medium text-[#475569]">{profile?.department || 'Computer Engineering'}</span>
-              <span className="text-[#CBD5E1]">•</span>
-              <span>{divStr}</span>
-              <span className="text-[#CBD5E1]">•</span>
-              <span className="font-mono text-[10px] text-[#64748B]">PRN #{prnStr}</span>
-              <span className="text-[#CBD5E1]">•</span>
-              <span className="font-medium text-[#0D9488] bg-[#F0FDFA] px-1.5 py-0.2 rounded border border-[#99F6E4]/50">
-                {semStr}
+          </div>
+
+          {/* Line 2: Subtle, secondary academic details */}
+          <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-[#64748B] leading-tight mt-0.5 truncate">
+            {profile?.role === 'ADMIN' ? (
+              <span>Registrar Office • Institutional Governance & Circulars • AY 2024–25</span>
+            ) : profile?.role === 'FACULTY' ? (
+              <span>
+                Dept of {profile?.department || 'Computer Engineering'} • Cabin 412 • EMP-CE-402 • AY 2024–25
               </span>
-            </div>
-          )}
+            ) : (
+              <div className="flex items-center gap-1.5">
+                <span className="font-medium text-[#475569]">{profile?.department || 'Computer Engineering'}</span>
+                <span className="text-[#CBD5E1]">•</span>
+                <span>{divStr}</span>
+                <span className="text-[#CBD5E1]">•</span>
+                <span className="font-mono text-[10px] text-[#64748B]">PRN #{prnStr}</span>
+                <span className="text-[#CBD5E1]">•</span>
+                <span className="font-medium text-[#0D9488] bg-[#F0FDFA] px-1.5 py-0.2 rounded border border-[#99F6E4]/50">
+                  {semStr}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Center: Subtle lightning bolt accent icon */}
+      <div className="hidden lg:flex items-center justify-center flex-shrink-0">
+        <div className="w-7 h-7 rounded-full bg-amber-50 border border-amber-200/70 flex items-center justify-center shadow-2xs">
+          <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
         </div>
       </div>
 
@@ -652,7 +679,7 @@ export default function Header({ currentTime, profile, onNavigate }: HeaderProps
           >
             {/* Avatar Circle with Online Dot */}
             <div className="relative flex-shrink-0">
-              <div className="w-6.5 h-6.5 rounded-full bg-gradient-to-tr from-[#0D9488] to-[#10B981] flex items-center justify-center text-white text-[10px] font-bold shadow-2xs">
+              <div className="w-6.5 h-6.5 rounded-full bg-[#1E3A8A] flex items-center justify-center text-white text-[10px] font-bold shadow-2xs">
                 {initials}
               </div>
               <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#10B981] border-2 border-white ring-1 ring-emerald-500/30" />
@@ -676,7 +703,7 @@ export default function Header({ currentTime, profile, onNavigate }: HeaderProps
               <div className="p-4 bg-gradient-to-b from-[#F8FAFC] to-white border-b border-[#F1F5F9]">
                 <div className="flex items-center gap-3">
                   <div className="relative flex-shrink-0">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0D9488] to-[#10B981] flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                    <div className="w-10 h-10 rounded-xl bg-[#1E3A8A] flex items-center justify-center text-white font-bold text-sm shadow-sm">
                       {initials}
                     </div>
                     <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#10B981] border-2 border-white" />

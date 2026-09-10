@@ -297,7 +297,7 @@ export default function Header({ currentTime, profile, onNavigate }: HeaderProps
 
   const firstName = profile?.name ? profile.name.split(' ')[0] : 'Aditya'
   const displayName = profile?.name || (profile?.role === 'FACULTY' ? 'Prof. Rajesh Kulkarni' : 'Aditya Sharma')
-  const userEmail = profile?.email || (profile?.role === 'FACULTY' ? 'rajesh.kulkarni@college.edu' : 'aditya.sharma@college.edu')
+  const userEmail = profile?.email || (profile?.role === 'FACULTY' ? 'rajesh.kulkarni@college.edu' : 'aditya@college.edu')
   const initials =
     displayName
       .split(' ')
@@ -318,7 +318,7 @@ export default function Header({ currentTime, profile, onNavigate }: HeaderProps
   const semStr = profile?.semester ? `Sem ${profile.semester}` : 'Sem 5'
 
   return (
-    <header className="fixed top-0 left-60 right-0 h-14 bg-white/90 backdrop-blur-xl border-b border-[#E2E8F0] z-40 flex items-center justify-between px-6 shadow-[0_1px_4px_rgba(15,23,42,0.04)]">
+    <header className="fixed top-0 left-60 right-0 h-14 bg-white/90 backdrop-blur-xl border-b border-[#E2E8F0] z-40 flex items-center justify-between px-6 shadow-[0_1px_4px_rgba(15,23,42,0.04)] print:hidden">
       {/* Left: Two-line Hierarchical Greeting */}
       <div className="flex flex-col justify-center min-w-0">
         {/* Line 1: Bold, prominent greeting + calendar date */}

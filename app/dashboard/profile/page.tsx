@@ -63,7 +63,7 @@ export default function DedicatedProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-[#F8FAFC] print:bg-white print:min-h-0">
       {/* Sidebar with active profile */}
       <Sidebar
         activeView="profile"
@@ -72,11 +72,11 @@ export default function DedicatedProfilePage() {
       />
 
       {/* Main Content Area */}
-      <div className="pl-60 min-h-screen flex flex-col">
+      <div className="pl-60 min-h-screen flex flex-col print:pl-0 print:min-h-0">
         <Header profile={profile} onNavigate={handleNavigate} />
 
-        <main className="flex-1 pt-14">
-          <div className="w-full max-w-[80rem] mx-auto px-5 md:px-8 py-6">
+        <main className="flex-1 pt-14 print:pt-0">
+          <div className="w-full max-w-[80rem] mx-auto px-5 md:px-8 py-6 print:max-w-none print:p-0 print:m-0">
             {loading ? (
               <div className="flex items-center justify-center py-24">
                 <div className="flex items-center gap-3 text-xs text-[#0D9488] bg-[#F0FDFA] border border-[#99F6E4] px-4 py-2 rounded-full animate-pulse shadow-sm">

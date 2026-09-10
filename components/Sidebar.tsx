@@ -56,7 +56,7 @@ export default function Sidebar({ activeView, onNavigate, profile }: SidebarProp
   const displayDept = profile?.department || 'Computer Engineering'
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-60 bg-white border-r border-[#E2E8F0] z-50 flex flex-col shadow-[1px_0_8px_rgba(15,23,42,0.04)]">
+    <aside className="fixed left-0 top-0 h-full w-60 bg-white border-r border-[#E2E8F0] z-50 flex flex-col shadow-[1px_0_8px_rgba(15,23,42,0.04)] print:hidden">
       {/* College Brand Header */}
       <div className="px-4 py-5 flex items-center gap-3 border-b border-[#F1F5F9] flex-shrink-0">
         <div className="w-9 h-9 rounded-lg bg-[#F0FDFA] border border-[#99F6E4] flex items-center justify-center flex-shrink-0">

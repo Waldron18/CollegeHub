@@ -50,7 +50,7 @@ export default function VirtualIdCardModal({
   const isAdmin = profile?.role === 'ADMIN'
 
   const displayName = profile?.name || (isFaculty ? 'Prof. Rajesh Kulkarni' : 'Aditya Sharma')
-  const prn = profile?.prnNumber || (isFaculty ? 'EMP-CE-402' : '12413586')
+  const prn = profile?.prnNumber || (isFaculty ? 'EMP-CE-402' : '22110482')
   const dept = profile?.department || 'Computer Engineering'
   const division = profile?.division || 'A'
   const semester = profile?.semester || 5

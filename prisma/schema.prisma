@@ -1,0 +1,277 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  STUDENT
+  FACULTY
+  ADMIN
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum ChannelType {
+  COLLEGE_ANNOUNCEMENT
+  DEPT_ANNOUNCEMENT
+  DIVISION_CHAT
+  SUBJECT_CHAT
+}
+
+model User {
+  id                    String                 @id @default(uuid())
+  prnNumber             String?                @unique
+  name                  String
+  email                 String                 @unique
+  passwordHash          String
+  role                  Role                   @default(STUDENT)
+  departmentId          String?
+  divisionId            String?
+  department            Department?            @relation(fields: [departmentId], references: [id])
+  division              Division?              @relation(fields: [divisionId], references: [id])
+  enrollments           Enrollment[]
+  attendanceRecords     AttendanceRecord[]
+  feeTransactions       FeeTransaction[]
+  sentMessages          Message[]              @relation("SentMessages")
+  receivedMessages      Message[]              @relation("ReceivedMessages")
+  assignmentSubmissions AssignmentSubmission[]
+  taughtSlots           TimetableSlot[]
+  feedbacks             CourseFeedback[]
+  courseMaterials       CourseMaterial[]
+  extraLectures         ExtraLecture[]
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+}
+
+model Department {
+  id          String        @id @default(uuid())
+  name        String        @unique
+  code        String        @unique
+  users       User[]
+  divisions   Division[]
+  subjects    Subject[]
+  communities Community[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Division {
+  id             String          @id @default(uuid())
+  name           String
+  semester       Int
+  departmentId   String
+  department     Department      @relation(fields: [departmentId], references: [id])
+  users          User[]
+  timetableSlots TimetableSlot[]
+  extraLectures  ExtraLecture[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@unique([name, departmentId])
+}
+
+model Subject {
+  id             String          @id @default(uuid())
+  name           String
+  code           String          @unique
+  departmentId   String
+  department     Department      @relation(fields: [departmentId], references: [id])
+  enrollments    Enrollment[]
+  timetableSlots TimetableSlot[]
+  assignments    Assignment[]
+  feedbacks      CourseFeedback[]
+  courseMaterials CourseMaterial[]
+  extraLectures   ExtraLecture[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model Enrollment {
+  id         String   @id @default(uuid())
+  studentId  String
+  student    User     @relation(fields: [studentId], references: [id])
+  subjectId  String
+  subject    Subject  @relation(fields: [subjectId], references: [id])
+  enrolledAt DateTime @default(now())
+
+  @@unique([studentId, subjectId])
+}
+
+model TimetableSlot {
+  id                String             @id @default(uuid())
+  divisionId        String
+  division          Division           @relation(fields: [divisionId], references: [id])
+  subjectId         String
+  subject           Subject            @relation(fields: [subjectId], references: [id])
+  facultyId         String
+  faculty           User               @relation(fields: [facultyId], references: [id])
+  dayOfWeek         String
+  startTime         String
+  endTime           String
+  roomNumber        String
+  attendanceRecords AttendanceRecord[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@index([dayOfWeek])
+  @@index([divisionId, dayOfWeek])
+  @@index([facultyId, dayOfWeek])
+}
+
+model AttendanceRecord {
+  id              String           @id @default(uuid())
+  studentId       String
+  student         User             @relation(fields: [studentId], references: [id])
+  timetableSlotId String
+  timetableSlot   TimetableSlot    @relation(fields: [timetableSlotId], references: [id])
+  date            DateTime
+  status          AttendanceStatus @default(PRESENT)
+  durationMinutes Int              @default(60)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model Community {
+  id           String     @id @default(uuid())
+  name         String
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id])
+  channels     Channel[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Channel {
+  id          String      @id @default(uuid())
+  name        String
+  type        ChannelType @default(DIVISION_CHAT)
+  communityId String
+  community   Community   @relation(fields: [communityId], references: [id])
+  messages    Message[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Message {
+  id                String   @id @default(uuid())
+  content           String
+  fileUrl           String?
+  senderId          String
+  sender            User     @relation("SentMessages", fields: [senderId], references: [id])
+  channelId         String?
+  channel           Channel? @relation(fields: [channelId], references: [id])
+  directRecipientId String?
+  directRecipient   User?    @relation("ReceivedMessages", fields: [directRecipientId], references: [id])
+  createdAt         DateTime @default(now())
+}
+
+model Assignment {
+  id          String                 @id @default(uuid())
+  title       String
+  description String?
+  subjectId   String
+  subject     Subject                @relation(fields: [subjectId], references: [id])
+  dueDate     DateTime
+  submissions AssignmentSubmission[]
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+}
+
+model AssignmentSubmission {
+  id           String     @id @default(uuid())
+  assignmentId String
+  assignment   Assignment @relation(fields: [assignmentId], references: [id])
+  studentId    String
+  student      User       @relation(fields: [studentId], references: [id])
+  submittedAt  DateTime   @default(now())
+  fileUrl      String?
+  grade        String?
+  feedback     String?
+  feedbackDate DateTime?
+
+  @@unique([assignmentId, studentId])
+}
+
+model FeeTransaction {
+  id             String        @id @default(uuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id])
+  amount         Float
+  status         PaymentStatus @default(PENDING)
+  transactionRef String        @unique
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+model CourseFeedback {
+  id        String   @id @default(uuid())
+  subjectId String
+  studentId String
+  rating    Int      // 1 to 5
+  feedback  String
+  createdAt DateTime @default(now())
+  subject   Subject  @relation(fields: [subjectId], references: [id])
+  student   User     @relation(fields: [studentId], references: [id])
+
+  @@unique([subjectId, studentId])
+}
+
+model CourseMaterial {
+  id           String   @id @default(uuid())
+  title        String
+  description  String?
+  fileUrl      String
+  fileType     String   // "PDF", "PPT", "DOC", "CODE"
+  fileSize     String?  // e.g., "4.2 MB"
+  subjectId    String
+  uploadedById String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  subject      Subject  @relation(fields: [subjectId], references: [id])
+  uploadedBy   User     @relation(fields: [uploadedById], references: [id])
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model ExtraLecture {
+  id          String        @id @default(uuid())
+  subjectId   String
+  facultyId   String
+  divisionId  String
+  date        DateTime      // Specific calendar date (e.g. 2026-09-10)
+  startTime   String        // e.g. "02:00 PM"
+  endTime     String        // e.g. "03:00 PM"
+  roomNumber  String        // e.g. "Virtual Room 402"
+  reason      String        // e.g. "Syllabus catch-up on Deadlocks"
+  status      RequestStatus @default(PENDING)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  subject     Subject       @relation(fields: [subjectId], references: [id])
+  faculty     User          @relation(fields: [facultyId], references: [id])
+  division    Division      @relation(fields: [divisionId], references: [id])
+
+  @@index([date, status])
+  @@index([divisionId, date])
+  @@index([facultyId, date])
+}
+
+

@@ -44,6 +44,7 @@ import {
   Radio,
 } from 'lucide-react'
 import type { StudentProfile } from '@/types/dashboard'
+import { FacultyAssignmentsView } from '@/components/faculty/FacultyAssignmentsView'
 
 export type FacultyVoipTab = 'lecture' | 'materials' | 'assignments'
 
@@ -1526,146 +1527,7 @@ export default function FacultyVoipView({
 
       {/* ==================== SUB-TAB 3: ASSIGNMENT REVIEW & GRADING ==================== */}
       {activeTab === 'assignments' && (
-        <div className="flex flex-col gap-6">
-          {/* Header Bar with Filter and "+ Create Assignment" */}
-          <div className="rounded-xl bg-white border border-[#E2E8F0] p-5 shadow-sm flex items-center justify-between flex-wrap gap-4">
-            <div>
-              <h3 className="text-sm font-semibold text-[#0F172A]">
-                Course Assignment Submissions & Grading
-              </h3>
-              <p className="text-[11px] text-[#64748B] mt-0.5">
-                Review files uploaded by students, assign academic grades, and create new coursework.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2.5">
-              {/* Filter */}
-              <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
-                <Filter className="w-3.5 h-3.5 text-[#0D9488]" />
-                <select
-                  value={selectedAssignmentFilter}
-                  onChange={(e) => setSelectedAssignmentFilter(e.target.value)}
-                  className="text-xs px-3 py-1.5 rounded-lg border border-[#CBD5E1] bg-white text-[#0F172A] focus:outline-none focus:border-[#0D9488]"
-                >
-                  <option value="ALL">All Course Assignments</option>
-                  {assignments.map((asg) => (
-                    <option key={asg.id} value={asg.id}>
-                      {asg.subjectCode}: {asg.title}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Create Assignment Modal Button */}
-              <button
-                type="button"
-                onClick={() => setIsCreateModalOpen(true)}
-                className="px-3.5 py-1.5 rounded-lg bg-[#0D9488] hover:bg-[#0F766E] text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Create Assignment</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Submissions List Table */}
-          <div className="rounded-xl bg-white border border-[#E2E8F0] p-6 shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-xs font-semibold text-[#0F172A]">
-                Submitted Coursework ({filteredSubmissions.length} Total)
-              </span>
-              <span className="text-[11px] text-[#64748B]">
-                {filteredSubmissions.filter((s) => !!s.grade).length} Graded •{' '}
-                {filteredSubmissions.filter((s) => !s.grade).length} Pending Evaluation
-              </span>
-            </div>
-
-            {filteredSubmissions.length === 0 ? (
-              <div className="p-8 text-center text-[#64748B] bg-[#F8FAFC] rounded-xl border border-[#E2E8F0]">
-                <FileCheck className="w-8 h-8 text-[#94A3B8] mx-auto mb-2" />
-                <p className="text-xs font-semibold text-[#0F172A]">No submissions match the filter</p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-[#F8FAFC] text-[#64748B] font-semibold uppercase text-[10px] tracking-wider border-b border-[#E2E8F0]">
-                    <tr>
-                      <th className="py-2.5 px-3">Student Name</th>
-                      <th className="py-2.5 px-3">PRN Number</th>
-                      <th className="py-2.5 px-3">Coursework</th>
-                      <th className="py-2.5 px-3">Attached File</th>
-                      <th className="py-2.5 px-3">Submitted At</th>
-                      <th className="py-2.5 px-3 text-right">Academic Grade</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#E2E8F0]">
-                    {filteredSubmissions.map((sub) => (
-                      <tr key={sub.id} className="hover:bg-[#F8FAFC]/80 transition-colors">
-                        <td className="py-3 px-3 font-semibold text-[#0F172A]">
-                          {sub.studentName}
-                        </td>
-                        <td className="py-3 px-3 font-mono text-[#64748B]">
-                          {sub.prnNumber}
-                        </td>
-                        <td className="py-3 px-3">
-                          <span className="font-mono font-semibold text-[#0D9488] mr-1.5">
-                            {sub.subjectCode}
-                          </span>
-                          <span className="text-[#334155]">{sub.assignmentTitle}</span>
-                        </td>
-                        <td className="py-3 px-3">
-                          {sub.fileUrl ? (
-                            <span className="font-mono text-[11px] text-[#0D9488] bg-[#F0FDFA] px-2 py-0.5 rounded border border-[#99F6E4]">
-                              {sub.fileUrl}
-                            </span>
-                          ) : (
-                            <span className="text-[#94A3B8]">No file attached</span>
-                          )}
-                        </td>
-                        <td className="py-3 px-3 text-[#64748B]">
-                          {new Date(sub.submittedAt).toLocaleDateString(undefined, {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                          })}
-                        </td>
-                        <td className="py-3 px-3 text-right">
-                          <div className="inline-flex items-center gap-1.5 justify-end">
-                            <input
-                              type="text"
-                              value={gradesInputMap[sub.id] || ''}
-                              onChange={(e) =>
-                                setGradesInputMap((prev) => ({
-                                  ...prev,
-                                  [sub.id]: e.target.value,
-                                }))
-                              }
-                              placeholder="e.g. A+, 9/10"
-                              className="w-20 px-2 py-1 text-xs text-center rounded border border-[#CBD5E1] focus:outline-none focus:border-[#0D9488]"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => handleSaveGrade(sub.id)}
-                              disabled={savingGradeId === sub.id}
-                              className="px-2.5 py-1 rounded bg-[#0D9488] hover:bg-[#0F766E] text-white font-semibold text-[11px] flex items-center gap-1 transition-colors disabled:opacity-50"
-                            >
-                              {savingGradeId === sub.id ? (
-                                <Loader2 className="w-3 h-3 animate-spin" />
-                              ) : (
-                                <Check className="w-3 h-3" />
-                              )}
-                              <span>Save</span>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        </div>
+        <FacultyAssignmentsView />
       )}
 
       {/* Create Assignment Modal */}

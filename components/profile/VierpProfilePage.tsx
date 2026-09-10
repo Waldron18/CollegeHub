@@ -41,7 +41,10 @@ import {
   Calculator,
   Sparkles,
   X,
+  Menu,
+  Receipt,
 } from 'lucide-react'
+import { FeeReceiptModal } from '@/components/common/FeeReceiptModal'
 
 function YoutubeIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -256,6 +259,8 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
   const [isSaving, setIsSaving] = useState(false)
   const [toastMsg, setToastMsg] = useState<string | null>(null)
   const [isSupportModalOpen, setIsSupportModalOpen] = useState(false)
+  const [isFeeModalOpen, setIsFeeModalOpen] = useState(false)
+  const [isMobileRailOpen, setIsMobileRailOpen] = useState(false)
 
   // Sub-tab states
   const [personalSubTab, setPersonalSubTab] = useState<
@@ -698,10 +703,121 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
         </button>
       </div>
 
+      {/* ── Mobile Sticky Navigation Header (< 768px / md:hidden) ─────────── */}
+      <div className="md:hidden w-full sticky top-0 z-30 bg-white/95 backdrop-blur-xs border border-[#E2E8F0] p-2.5 rounded-xl shadow-xs flex items-center justify-between gap-3 mb-3 print:hidden">
+        {(() => {
+          const currentRail = rails.find((r) => r.id === activeRail) || rails[0]
+          const CurrentIcon = currentRail.icon
+          const currentIndex = rails.findIndex((r) => r.id === activeRail) + 1
+          return (
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-[#1E40AF] text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+                <CurrentIcon className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-[10px] text-[#64748B] block font-mono">
+                  Section {currentIndex} of {rails.length}
+                </span>
+                <h3 className="text-xs font-bold text-[#0F172A] truncate">
+                  {currentRail.label}
+                </h3>
+              </div>
+            </div>
+          )
+        })()}
+
+        <button
+          type="button"
+          onClick={() => setIsMobileRailOpen(true)}
+          className="px-3 py-1.5 rounded-lg bg-[#EFF6FF] border border-[#BFDBFE] hover:bg-[#DBEAFE] text-[#1E40AF] text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer flex-shrink-0 active:scale-95"
+        >
+          <Menu className="w-3.5 h-3.5" />
+          <span>Sections ({rails.length})</span>
+        </button>
+      </div>
+
+      {/* ── Mobile Slide-Over Rail Drawer (< 768px) ───────────────────────────── */}
+      {isMobileRailOpen && (
+        <div className="fixed inset-0 z-50 md:hidden animate-in fade-in-0 duration-200">
+          {/* Semi-transparent Dimmed Backdrop */}
+          <div
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
+            onClick={() => setIsMobileRailOpen(false)}
+            aria-hidden="true"
+          />
+
+          {/* Left Sheet Container */}
+          <div className="fixed inset-y-0 left-0 z-50 w-72 bg-white shadow-2xl p-4 flex flex-col border-r border-[#E2E8F0] animate-in slide-in-from-left duration-200">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0] mb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-[#1E40AF] text-white flex items-center justify-center shadow-xs">
+                  <Bookmark className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-xs font-bold text-[#0F172A]">VIERP Dossier Sections</h3>
+                  <span className="text-[10px] text-[#64748B]">{rails.length} Profile Modules</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsMobileRailOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                aria-label="Close sections drawer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Menu Tiles */}
+            <div className="flex-1 overflow-y-auto space-y-1.5 pr-1">
+              {rails.map((item, index) => {
+                const Icon = item.icon
+                const isActive = activeRail === item.id
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => {
+                      setActiveRail(item.id)
+                      setIsMobileRailOpen(false)
+                      window.scrollTo({ top: 0, behavior: 'smooth' })
+                    }}
+                    className={cn(
+                      'w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-3 transition-all cursor-pointer',
+                      isActive
+                        ? 'bg-[#1E40AF] text-white shadow-sm font-bold'
+                        : 'text-[#334155] hover:bg-[#F1F5F9] hover:text-[#0F172A]'
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0',
+                        isActive ? 'bg-white/20 text-white' : 'bg-[#EFF6FF] text-[#1E40AF]'
+                      )}
+                    >
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <span className="block truncate">{item.label}</span>
+                      <span className={cn('text-[10px] font-mono block', isActive ? 'text-blue-200' : 'text-[#94A3B8]')}>
+                        Module {index + 1}
+                      </span>
+                    </div>
+                    {isActive && (
+                      <CheckCircle2 className="w-4 h-4 text-white flex-shrink-0" />
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Screen-Only: Two-Column Interactive Layout ────────────────────────── */}
-      <div className="flex flex-col lg:flex-row gap-6 items-start print:hidden">
-        {/* Left Column: Pill-Shaped Vertical Rail */}
-        <aside className="w-full lg:w-16 flex-shrink-0 bg-[#DCEEFE] p-2 rounded-2xl shadow-sm border border-[#BAE6FD] flex lg:flex-col items-center justify-start gap-2 overflow-x-auto lg:overflow-x-visible">
+      <div className="flex flex-col md:flex-row gap-6 items-start print:hidden">
+        {/* Left Column: Pill-Shaped Vertical Rail (Tablet / Desktop: md:flex) */}
+        <aside className="hidden md:flex flex-col w-16 flex-shrink-0 bg-[#DCEEFE] p-2 rounded-2xl shadow-sm border border-[#BAE6FD] items-center justify-start gap-2">
           {rails.map((item, index) => {
             const Icon = item.icon
             const isActive = activeRail === item.id
@@ -1472,9 +1588,45 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                 )}
 
                 {bankSubTab === 'sponsorship' && (
-                  <div className="p-4 rounded-xl bg-[#F0FDFA] border border-[#99F6E4] text-xs text-[#0F766E]">
-                    <span className="font-bold block text-sm mb-1">EBC Scholarship Approved</span>
-                    Eligible for 50% tuition concession under State Government EBC Concession Scheme. Status verified by College Accounts Office.
+                  <div className="space-y-4">
+                    <div className="p-4 rounded-xl bg-[#F0FDFA] border border-[#99F6E4] text-xs text-[#0F766E] flex items-start justify-between flex-wrap gap-3">
+                      <div>
+                        <span className="font-bold block text-sm mb-1">EBC Scholarship Approved</span>
+                        Eligible for 50% tuition concession under State Government EBC Concession Scheme. Status verified by College Accounts Office.
+                      </div>
+                      <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold border border-emerald-300">
+                        CONCESSION VERIFIED
+                      </span>
+                    </div>
+
+                    {/* Official Fee Ledger & Challan Card */}
+                    <div className="p-5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-[#EFF6FF] border border-[#BFDBFE] flex items-center justify-center text-[#1E40AF] flex-shrink-0">
+                          <Receipt className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-xs font-bold text-[#0F172A]">Semester V Fee Ledger &amp; Challan</h4>
+                            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">
+                              CLEARED
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-[#64748B] mt-0.5">
+                            Tuition: ₹85k • Development: ₹14.5k • Exam: ₹3.5k • Total Paid: ₹1,05,000
+                          </p>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setIsFeeModalOpen(true)}
+                        className="px-3.5 py-2 rounded-lg bg-[#F59E0B] hover:bg-[#D97706] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer self-start sm:self-auto active:scale-95"
+                      >
+                        <Printer className="w-3.5 h-3.5" />
+                        <span>Print Fee Challan</span>
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -2382,6 +2534,13 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           </div>
         </div>
       )}
+
+      {/* ── Official University Fee Challan Modal ────────────────────────────── */}
+      <FeeReceiptModal
+        isOpen={isFeeModalOpen}
+        onClose={() => setIsFeeModalOpen(false)}
+        transactionId="TXN-2024-SEM5-4821"
+      />
 
       {/* ── Printable Profile Dossier (Activated on window.print()) ─────────── */}
       <div className="hidden print:block font-sans text-black max-w-full p-2">

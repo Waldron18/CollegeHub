@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import {
   MessageSquare,
   Video,
@@ -10,10 +11,12 @@ import {
   Users,
   Clock,
   CheckCircle,
+  Receipt,
 } from 'lucide-react'
 
 import type { StudentProfile, FeeStatus, EnrolledSubject } from '@/types/dashboard'
 import DepartmentNoticesCard from '@/components/common/DepartmentNoticesCard'
+import { FeeReceiptModal } from '@/components/common/FeeReceiptModal'
 
 interface HomeOverviewProps {
   onNavigate: (view: 'chat' | 'voip' | 'vierp') => void
@@ -28,6 +31,8 @@ export default function HomeOverview({
   feeStatus,
   enrolledSubjects,
 }: HomeOverviewProps) {
+  const [isReceiptOpen, setIsReceiptOpen] = useState(false)
+
   return (
     <div className="flex flex-col gap-6">
       {/* 3-Column Utility Card Grid */}
@@ -209,10 +214,19 @@ export default function HomeOverview({
                     <span className="text-xs font-normal text-[#94A3B8]">/ 10</span>
                   </span>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-semibold uppercase text-[#94A3B8]">Tuition Ledger</span>
-                  <span className="font-mono text-xs text-[#10B981] font-medium">AY 2024-25 Cleared</span>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsReceiptOpen(true)}
+                  className="flex flex-col text-left group cursor-pointer focus:outline-hidden"
+                  title="Click to view & print official fee challan receipt"
+                >
+                  <span className="text-[10px] font-semibold uppercase text-[#94A3B8] group-hover:text-[#0D9488] transition-colors flex items-center gap-1">
+                    Tuition Ledger <Receipt className="w-2.5 h-2.5 inline text-[#0D9488]" />
+                  </span>
+                  <span className="font-mono text-xs text-[#10B981] font-medium group-hover:underline">
+                    AY 2024-25 Cleared
+                  </span>
+                </button>
               </div>
             </div>
           </div>
@@ -232,6 +246,13 @@ export default function HomeOverview({
 
       {/* Pinned Department Notices & Circulars */}
       <DepartmentNoticesCard userRole="STUDENT" />
+
+      {/* Official Fee Challan Receipt Modal */}
+      <FeeReceiptModal
+        isOpen={isReceiptOpen}
+        onClose={() => setIsReceiptOpen(false)}
+        transactionId={feeStatus?.transactionRef || 'TXN-2024-SEM5-4821'}
+      />
     </div>
   )
 }

@@ -80,6 +80,8 @@ export async function GET() {
         submittedAt: sub.submittedAt.toISOString(),
         fileUrl: sub.fileUrl,
         grade: sub.grade,
+        feedback: sub.feedback,
+        feedbackDate: sub.feedbackDate ? sub.feedbackDate.toISOString() : null,
       })),
     }))
 
@@ -183,7 +185,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { submissionId, grade } = body
+    const { submissionId, grade, feedback } = body
 
     if (!submissionId) {
       return NextResponse.json(
@@ -195,18 +197,22 @@ export async function PATCH(request: NextRequest) {
     const updated = await prisma.assignmentSubmission.update({
       where: { id: submissionId },
       data: {
-        grade: grade ? grade.trim() : null,
+        grade: grade ? String(grade).trim() : null,
+        feedback: feedback ? String(feedback).trim() : null,
+        feedbackDate: grade || feedback ? new Date() : null,
       },
     })
 
     return NextResponse.json({
       success: true,
-      message: 'Grade recorded successfully.',
+      message: 'Grade and feedback recorded successfully.',
       submission: {
         id: updated.id,
         assignmentId: updated.assignmentId,
         studentId: updated.studentId,
         grade: updated.grade,
+        feedback: updated.feedback,
+        feedbackDate: updated.feedbackDate ? updated.feedbackDate.toISOString() : null,
       },
     })
   } catch (error: any) {

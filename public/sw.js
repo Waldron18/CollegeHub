@@ -163,6 +163,11 @@ self.addEventListener('activate', (event) => {
 
 // Fetch Event
 self.addEventListener('fetch', (event) => {
+  // Explicitly bypass Next.js internal chunks, build artifacts, and development hot-reloading endpoints
+  if (event.request.url.includes('/_next/')) {
+    return;
+  }
+
   // Only handle HTTP/HTTPS GET requests
   if (event.request.method !== 'GET') {
     return;

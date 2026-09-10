@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   User,
   Phone,
@@ -37,7 +37,53 @@ import {
   List,
   HeartPulse,
   Trash2,
+  HelpCircle,
+  Calculator,
+  Sparkles,
+  X,
 } from 'lucide-react'
+
+function YoutubeIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em" {...props}>
+      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+    </svg>
+  )
+}
+
+function FacebookIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em" {...props}>
+      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+    </svg>
+  )
+}
+
+function InstagramIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="1em" height="1em" {...props}>
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+    </svg>
+  )
+}
+
+function TwitterIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em" {...props}>
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+    </svg>
+  )
+}
+
+function LinkedinIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em" {...props}>
+      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.65 1.65 0 1 0 0-3.3 1.66 1.66 0 0 0 0 3.3m1.39 9.74v-8.37H5.07v8.37h2.78z"/>
+    </svg>
+  )
+}
 import { cn } from '@/lib/utils'
 import type { StudentProfile } from '@/types/dashboard'
 import type { ActiveView } from '@/components/Sidebar'
@@ -203,10 +249,13 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
   const isFaculty = profile?.role === 'FACULTY'
   const rails = isFaculty ? FACULTY_RAILS : STUDENT_RAILS
 
+  const draftKey = `collegehub_profile_draft_${profile?.id || 'aditya_22110482'}`
+
   const [activeRail, setActiveRail] = useState<string>('personal')
   const [showAadhaar, setShowAadhaar] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [toastMsg, setToastMsg] = useState<string | null>(null)
+  const [isSupportModalOpen, setIsSupportModalOpen] = useState(false)
 
   // Sub-tab states
   const [personalSubTab, setPersonalSubTab] = useState<
@@ -229,6 +278,29 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
 
   const [selectedSignPreview, setSelectedSignPreview] = useState<string | null>(null)
   const [selectedSignName, setSelectedSignName] = useState<string | null>(null)
+
+  // ── Dynamic Interactive Lists for Empty States ──────────────────────────────
+  const [skillsList, setSkillsList] = useState<Array<{ id: string; name: string; level: string; category: string }>>([])
+  const [interestsList, setInterestsList] = useState<Array<{ id: string; title: string; category: string }>>([])
+  const [awardsList, setAwardsList] = useState<Array<{ id: string; title: string; issuingOrg: string; year: string }>>([])
+  const [activitiesList, setActivitiesList] = useState<Array<{ id: string; title: string; role: string; year: string }>>([])
+  const [medicalList, setMedicalList] = useState<Array<{ id: string; condition: string; verifiedBy: string; year: string }>>([])
+  const [additionalDocsList, setAdditionalDocsList] = useState<Array<{ id: string; title: string; type: string; uploadDate: string }>>([])
+
+  // Modal Dialog State for Entry Additions
+  const [activeModal, setActiveModal] = useState<string | null>(null)
+  const [modalFields, setModalFields] = useState<{ [key: string]: string }>({})
+
+  // Semester Marks & CGPA Calculator State
+  const [semesterLedgers, setSemesterLedgers] = useState([
+    { sem: 'Semester I', session: 'AY 2022–23 Sem I', credits: 22, sgpa: 9.12, status: 'PASS (Distinction)' },
+    { sem: 'Semester II', session: 'AY 2022–23 Sem II', credits: 22, sgpa: 9.24, status: 'PASS (Distinction)' },
+    { sem: 'Semester III', session: 'AY 2023–24 Sem I', credits: 24, sgpa: 9.18, status: 'PASS (Distinction)' },
+    { sem: 'Semester IV', session: 'AY 2023–24 Sem II', credits: 24, sgpa: 9.20, status: 'PASS (Distinction)' },
+  ])
+  const [calculatedCGPA, setCalculatedCGPA] = useState<number>(9.18)
+  const [calculatedPercentage, setCalculatedPercentage] = useState<number>(87.21)
+  const [cgpaCalculatedAt, setCgpaCalculatedAt] = useState<string | null>(null)
 
   // Form data state
   const [formData, setFormData] = useState({
@@ -289,17 +361,87 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
     micrCode: '411002081',
   })
 
+  // ── Local Storage Draft Restoration ─────────────────────────────────────────
+  useEffect(() => {
+    try {
+      const savedDraft = localStorage.getItem(draftKey)
+      if (savedDraft) {
+        const parsed = JSON.parse(savedDraft)
+        if (parsed.formData) setFormData((prev) => ({ ...prev, ...parsed.formData }))
+        if (parsed.skillsList) setSkillsList(parsed.skillsList)
+        if (parsed.interestsList) setInterestsList(parsed.interestsList)
+        if (parsed.awardsList) setAwardsList(parsed.awardsList)
+        if (parsed.activitiesList) setActivitiesList(parsed.activitiesList)
+        if (parsed.medicalList) setMedicalList(parsed.medicalList)
+        if (parsed.additionalDocsList) setAdditionalDocsList(parsed.additionalDocsList)
+        if (parsed.semesterLedgers) setSemesterLedgers(parsed.semesterLedgers)
+      }
+    } catch (e) {
+      console.warn('Failed to restore profile draft from localStorage:', e)
+    }
+  }, [draftKey])
+
+  // Auto-save draft on changes
+  const saveDraftToStorage = (updatedFormData?: any, updatedLists?: any) => {
+    try {
+      const draftPayload = {
+        formData: updatedFormData || formData,
+        skillsList: updatedLists?.skillsList || skillsList,
+        interestsList: updatedLists?.interestsList || interestsList,
+        awardsList: updatedLists?.awardsList || awardsList,
+        activitiesList: updatedLists?.activitiesList || activitiesList,
+        medicalList: updatedLists?.medicalList || medicalList,
+        additionalDocsList: updatedLists?.additionalDocsList || additionalDocsList,
+        semesterLedgers: updatedLists?.semesterLedgers || semesterLedgers,
+        lastSaved: new Date().toISOString(),
+      }
+      localStorage.setItem(draftKey, JSON.stringify(draftPayload))
+    } catch (e) {
+      console.warn('Failed to auto-save profile draft:', e)
+    }
+  }
+
   const handleChange = (field: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
+    const updated = { ...formData, [field]: value }
+    setFormData(updated)
+    saveDraftToStorage(updated)
   }
 
   const handleSave = (stepName: string) => {
     setIsSaving(true)
     setTimeout(() => {
       setIsSaving(false)
-      setToastMsg(`${stepName} saved successfully to VIERP ERP database.`)
+      // Commit and clear draft
+      try {
+        localStorage.removeItem(draftKey)
+      } catch (e) {
+        console.warn(e)
+      }
+      setToastMsg(`${stepName} committed to institutional ERP. Local draft synced.`)
       setTimeout(() => setToastMsg(null), 4000)
     }, 600)
+  }
+
+  // ── "FETCH CGPA" Calculation Engine ─────────────────────────────────────────
+  const handleFetchCgpa = () => {
+    let totalCredits = 0
+    let weightedSum = 0
+
+    semesterLedgers.forEach((sem) => {
+      totalCredits += sem.credits
+      weightedSum += sem.credits * sem.sgpa
+    })
+
+    const cgpa = totalCredits > 0 ? Number((weightedSum / totalCredits).toFixed(2)) : 0
+    const pct = Number((cgpa * 9.5).toFixed(2))
+
+    setCalculatedCGPA(cgpa)
+    setCalculatedPercentage(pct)
+    setCgpaCalculatedAt(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }))
+
+    setToastMsg(`CGPA Computed: ${cgpa} / 10.0 (Equivalent: ${pct}% • First Class with Distinction)`)
+    setTimeout(() => setToastMsg(null), 4500)
+    saveDraftToStorage()
   }
 
   // Determine dynamic primary bottom action button text
@@ -328,6 +470,123 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
       setActiveRail(rails[currentIndex - 1].id)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
+  }
+
+  // ── Modal Form Handling for Empty State Additions ───────────────────────────
+  const handleOpenModal = (category: string) => {
+    setActiveModal(category)
+    setModalFields({})
+  }
+
+  const handleCloseModal = () => {
+    setActiveModal(null)
+    setModalFields({})
+  }
+
+  const handleModalSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    const id = Date.now().toString()
+
+    if (activeModal === 'SKILLS') {
+      const newItem = {
+        id,
+        name: modalFields.name || 'React / TypeScript',
+        level: modalFields.level || 'Advanced',
+        category: modalFields.category || 'Web Architecture',
+      }
+      const updated = [newItem, ...skillsList]
+      setSkillsList(updated)
+      saveDraftToStorage(formData, { skillsList: updated })
+      setToastMsg('Technical skill added to profile repository.')
+    } else if (activeModal === 'INTEREST') {
+      const newItem = {
+        id,
+        title: modalFields.title || 'Robotics & Embedded Systems',
+        category: modalFields.category || 'Technical Club',
+      }
+      const updated = [newItem, ...interestsList]
+      setInterestsList(updated)
+      saveDraftToStorage(formData, { interestsList: updated })
+      setToastMsg('Interest entry added.')
+    } else if (activeModal === 'AWARD') {
+      const newItem = {
+        id,
+        title: modalFields.title || 'National Hackathon Winner',
+        issuingOrg: modalFields.issuingOrg || 'Smart India Hackathon',
+        year: modalFields.year || '2024',
+      }
+      const updated = [newItem, ...awardsList]
+      setAwardsList(updated)
+      saveDraftToStorage(formData, { awardsList: updated })
+      setToastMsg('Award/Honor record added.')
+    } else if (activeModal === 'ACTIVITY') {
+      const newItem = {
+        id,
+        title: modalFields.title || 'Technical Lead - IEEE Student Chapter',
+        role: modalFields.role || 'Executive Member',
+        year: modalFields.year || '2024',
+      }
+      const updated = [newItem, ...activitiesList]
+      setActivitiesList(updated)
+      saveDraftToStorage(formData, { activitiesList: updated })
+      setToastMsg('Extracurricular activity recorded.')
+    } else if (activeModal === 'MEDICAL') {
+      const newItem = {
+        id,
+        condition: modalFields.condition || 'General Fitness Clearance',
+        verifiedBy: modalFields.verifiedBy || 'Dr. Deshmukh (Campus Health Center)',
+        year: modalFields.year || '2024',
+      }
+      const updated = [newItem, ...medicalList]
+      setMedicalList(updated)
+      saveDraftToStorage(formData, { medicalList: updated })
+      setToastMsg('Medical clearance record appended.')
+    } else if (activeModal === 'DOCUMENTS') {
+      const newItem = {
+        id,
+        title: modalFields.title || 'Extra Certificate / Undertaking',
+        type: modalFields.type || 'PDF • Attested',
+        uploadDate: new Date().toLocaleDateString('en-GB'),
+      }
+      const updated = [newItem, ...additionalDocsList]
+      setAdditionalDocsList(updated)
+      saveDraftToStorage(formData, { additionalDocsList: updated })
+      setToastMsg('Document uploaded for ERP verification.')
+    }
+
+    setTimeout(() => setToastMsg(null), 3500)
+    handleCloseModal()
+  }
+
+  // Delete item handler (reverts to empty state when list length hits 0)
+  const handleDeleteItem = (listType: string, id: string) => {
+    if (listType === 'skills') {
+      const updated = skillsList.filter((item) => item.id !== id)
+      setSkillsList(updated)
+      saveDraftToStorage(formData, { skillsList: updated })
+    } else if (listType === 'interests') {
+      const updated = interestsList.filter((item) => item.id !== id)
+      setInterestsList(updated)
+      saveDraftToStorage(formData, { interestsList: updated })
+    } else if (listType === 'awards') {
+      const updated = awardsList.filter((item) => item.id !== id)
+      setAwardsList(updated)
+      saveDraftToStorage(formData, { awardsList: updated })
+    } else if (listType === 'activities') {
+      const updated = activitiesList.filter((item) => item.id !== id)
+      setActivitiesList(updated)
+      saveDraftToStorage(formData, { activitiesList: updated })
+    } else if (listType === 'medical') {
+      const updated = medicalList.filter((item) => item.id !== id)
+      setMedicalList(updated)
+      saveDraftToStorage(formData, { medicalList: updated })
+    } else if (listType === 'documents') {
+      const updated = additionalDocsList.filter((item) => item.id !== id)
+      setAdditionalDocsList(updated)
+      saveDraftToStorage(formData, { additionalDocsList: updated })
+    }
+    setToastMsg('Record removed from profile.')
+    setTimeout(() => setToastMsg(null), 2500)
   }
 
   // Handle Photo File Upload
@@ -368,7 +627,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
   }
 
   // Render "Oops.. Data Not Found!" Empty State
-  const renderEmptyState = (categoryTitle: string, actionLabel: string) => (
+  const renderEmptyState = (categoryTitle: string, actionLabel: string, modalCategory: string) => (
     <div className="py-16 px-6 flex flex-col items-center justify-center text-center">
       {/* Centered Purple Folder Illustration */}
       <div className="relative mb-5 flex items-center justify-center">
@@ -389,10 +648,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
 
       <button
         type="button"
-        onClick={() => {
-          setToastMsg(`${actionLabel} request recorded. Portal admin review pending.`)
-          setTimeout(() => setToastMsg(null), 3500)
-        }}
+        onClick={() => handleOpenModal(modalCategory)}
         className="mt-6 px-5 py-2.5 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm hover:shadow-md transition-all cursor-pointer active:scale-95"
       >
         <Plus className="w-4 h-4" />
@@ -694,7 +950,42 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                   </div>
                 )}
 
-                {personalSubTab === 'medical' && renderEmptyState('Medical & Health Records', '+ MEDICAL')}
+                {personalSubTab === 'medical' && (
+                  medicalList.length === 0 ? (
+                    renderEmptyState('Medical & Health Records', '+ MEDICAL', 'MEDICAL')
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-[#0F172A]">Registered Medical Clearances</span>
+                        <button
+                          type="button"
+                          onClick={() => handleOpenModal('MEDICAL')}
+                          className="px-3 py-1.5 rounded-lg bg-[#2563EB] text-white text-xs font-bold flex items-center gap-1"
+                        >
+                          <Plus className="w-3.5 h-3.5" /> Add Record
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {medicalList.map((item) => (
+                          <div key={item.id} className="p-4 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] flex items-start justify-between">
+                            <div>
+                              <span className="text-xs font-bold text-[#0F172A] block">{item.condition}</span>
+                              <span className="text-[11px] text-[#64748B] block mt-0.5">Verified by: {item.verifiedBy}</span>
+                              <span className="text-[10px] text-[#10B981] font-bold block mt-1">AY {item.year} Active</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteItem('medical', item.id)}
+                              className="text-red-500 hover:text-red-700 p-1"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                )}
 
                 {(personalSubTab === 'religion' ||
                   personalSubTab === 'handicapped' ||
@@ -997,67 +1288,92 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                   </div>
                 )}
 
+                {/* Interactive Engineering Semesters + FETCH CGPA Engine */}
                 {educationSubTab === 'graduation' && (
                   <div className="space-y-4 max-w-4xl">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-[#F0FDFA] border border-[#99F6E4]">
                       <div className="flex items-center gap-3">
-                        <span className="text-sm font-bold text-[#0F172A]">Semester Performance Ledgers</span>
-                        <span className="px-2 py-0.5 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46] font-mono font-bold text-xs">
-                          CGPA: 9.18 / 10.0
-                        </span>
+                        <div className="w-10 h-10 rounded-lg bg-[#0D9488] text-white flex items-center justify-center shadow-xs">
+                          <Calculator className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <span className="text-sm font-bold text-[#0F172A] block">Cumulative Academic Performance</span>
+                          <span className="text-xs text-[#0F766E]">
+                            Weighted computation across completed engineering semesters
+                          </span>
+                        </div>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setToastMsg('Latest SGPA & credit ledgers fetched from SPPU COE portal.')
-                          setTimeout(() => setToastMsg(null), 3000)
-                        }}
-                        className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-3 py-1.5 rounded-md font-semibold text-xs flex items-center gap-1.5 shadow-sm cursor-pointer"
-                      >
-                        <span>FETCH CGPA</span>
-                      </button>
+
+                      <div className="flex items-center gap-2">
+                        <div className="px-3 py-1 rounded-lg bg-white border border-[#99F6E4] text-center">
+                          <span className="text-[10px] text-[#64748B] block uppercase font-bold">CGPA</span>
+                          <span className="text-sm font-mono font-black text-[#0D9488]">{calculatedCGPA} / 10.0</span>
+                        </div>
+                        <div className="px-3 py-1 rounded-lg bg-white border border-[#99F6E4] text-center">
+                          <span className="text-[10px] text-[#64748B] block uppercase font-bold">Equivalent %</span>
+                          <span className="text-sm font-mono font-black text-[#2563EB]">{calculatedPercentage}%</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleFetchCgpa}
+                          className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-3.5 py-2 rounded-lg font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-95"
+                        >
+                          <Sparkles className="w-3.5 h-3.5" />
+                          <span>FETCH CGPA</span>
+                        </button>
+                      </div>
                     </div>
 
-                    <div className="border border-[#E2E8F0] rounded-xl overflow-hidden">
+                    <div className="border border-[#E2E8F0] rounded-xl overflow-hidden shadow-xs">
                       <table className="w-full text-xs text-left">
                         <thead className="bg-[#F8FAFC] text-[#475569] font-bold border-b border-[#E2E8F0]">
                           <tr>
                             <th className="p-3">Semester</th>
                             <th className="p-3">Academic Session</th>
-                            <th className="p-3">Credits Earned</th>
-                            <th className="p-3">SGPA</th>
+                            <th className="p-3">Credits</th>
+                            <th className="p-3">SGPA (out of 10)</th>
                             <th className="p-3">Result Status</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-[#F1F5F9]">
-                          <tr>
-                            <td className="p-3 font-semibold text-[#0F172A]">Semester I</td>
-                            <td className="p-3 text-[#64748B]">AY 2022–23 Sem I</td>
-                            <td className="p-3 font-mono">22</td>
-                            <td className="p-3 font-mono font-bold text-[#0D9488]">9.12</td>
-                            <td className="p-3"><span className="text-[#10B981] font-semibold">PASS (Distinction)</span></td>
-                          </tr>
-                          <tr>
-                            <td className="p-3 font-semibold text-[#0F172A]">Semester II</td>
-                            <td className="p-3 text-[#64748B]">AY 2022–23 Sem II</td>
-                            <td className="p-3 font-mono">22</td>
-                            <td className="p-3 font-mono font-bold text-[#0D9488]">9.24</td>
-                            <td className="p-3"><span className="text-[#10B981] font-semibold">PASS (Distinction)</span></td>
-                          </tr>
-                          <tr>
-                            <td className="p-3 font-semibold text-[#0F172A]">Semester III</td>
-                            <td className="p-3 text-[#64748B]">AY 2023–24 Sem I</td>
-                            <td className="p-3 font-mono">24</td>
-                            <td className="p-3 font-mono font-bold text-[#0D9488]">9.18</td>
-                            <td className="p-3"><span className="text-[#10B981] font-semibold">PASS (Distinction)</span></td>
-                          </tr>
-                          <tr>
-                            <td className="p-3 font-semibold text-[#0F172A]">Semester IV</td>
-                            <td className="p-3 text-[#64748B]">AY 2023–24 Sem II</td>
-                            <td className="p-3 font-mono">24</td>
-                            <td className="p-3 font-mono font-bold text-[#0D9488]">9.20</td>
-                            <td className="p-3"><span className="text-[#10B981] font-semibold">PASS (Distinction)</span></td>
-                          </tr>
+                          {semesterLedgers.map((sem, idx) => (
+                            <tr key={idx} className="hover:bg-slate-50 transition-colors">
+                              <td className="p-3 font-semibold text-[#0F172A]">{sem.sem}</td>
+                              <td className="p-3 text-[#64748B]">{sem.session}</td>
+                              <td className="p-3 font-mono">
+                                <input
+                                  type="number"
+                                  value={sem.credits}
+                                  onChange={(e) => {
+                                    const val = Number(e.target.value) || 0
+                                    const updated = [...semesterLedgers]
+                                    updated[idx].credits = val
+                                    setSemesterLedgers(updated)
+                                    saveDraftToStorage(formData, { semesterLedgers: updated })
+                                  }}
+                                  className="w-16 h-7 px-2 border border-[#CBD5E1] rounded text-xs font-mono font-semibold text-[#0F172A]"
+                                />
+                              </td>
+                              <td className="p-3 font-mono">
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  value={sem.sgpa}
+                                  onChange={(e) => {
+                                    const val = Number(e.target.value) || 0
+                                    const updated = [...semesterLedgers]
+                                    updated[idx].sgpa = val
+                                    setSemesterLedgers(updated)
+                                    saveDraftToStorage(formData, { semesterLedgers: updated })
+                                  }}
+                                  className="w-20 h-7 px-2 border border-[#CBD5E1] rounded text-xs font-mono font-bold text-[#0D9488]"
+                                />
+                              </td>
+                              <td className="p-3">
+                                <span className="text-[#10B981] font-semibold">{sem.status}</span>
+                              </td>
+                            </tr>
+                          ))}
                         </tbody>
                       </table>
                     </div>
@@ -1279,25 +1595,135 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                     </div>
                   </div>
                 ) : (
-                  renderEmptyState('Additional Certificates & Submissions', '+ UPLOAD DOCUMENTS')
+                  additionalDocsList.length === 0 ? (
+                    renderEmptyState('Additional Certificates & Submissions', '+ UPLOAD DOCUMENTS', 'DOCUMENTS')
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-[#0F172A]">Uploaded Submissions</span>
+                        <button
+                          type="button"
+                          onClick={() => handleOpenModal('DOCUMENTS')}
+                          className="px-3 py-1.5 rounded-lg bg-[#2563EB] text-white text-xs font-bold flex items-center gap-1"
+                        >
+                          <Plus className="w-3.5 h-3.5" /> Upload Document
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {additionalDocsList.map((doc) => (
+                          <div key={doc.id} className="p-4 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] flex items-start justify-between">
+                            <div>
+                              <span className="text-xs font-bold text-[#0F172A] block">{doc.title}</span>
+                              <span className="text-[11px] text-[#64748B] block mt-0.5">{doc.type} • Uploaded {doc.uploadDate}</span>
+                              <span className="text-[10px] text-amber-600 font-bold block mt-1">Pending Verification</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteItem('documents', doc.id)}
+                              className="text-red-500 hover:text-red-700 p-1"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )
                 )}
               </div>
             </div>
           )}
 
-          {/* ================= RAIL 8: EXPERIENCE (EMPTY STATE) ================= */}
-          {activeRail === 'experience' && renderEmptyState('Internships & Prior Professional Experience', '+ EXPERIENCE')}
+          {/* ================= RAIL 8: EXPERIENCE ================= */}
+          {activeRail === 'experience' && (
+            <div className="p-6 flex-1">
+              {renderEmptyState('Internships & Prior Professional Experience', '+ EXPERIENCE', 'EXPERIENCE')}
+            </div>
+          )}
 
-          {/* ================= RAIL 9: AWARDS (EMPTY STATE) ================= */}
-          {activeRail === 'awards' && renderEmptyState('Awards & Academic Recognitions', '+ AWARD')}
+          {/* ================= RAIL 9: AWARDS ================= */}
+          {activeRail === 'awards' && (
+            <div className="p-6 flex-1">
+              {awardsList.length === 0 ? (
+                renderEmptyState('Awards & Academic Recognitions', '+ AWARD', 'AWARD')
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-[#0F172A]">Awards & Recognitions</span>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenModal('AWARD')}
+                      className="px-3 py-1.5 rounded-lg bg-[#2563EB] text-white text-xs font-bold flex items-center gap-1"
+                    >
+                      <Plus className="w-3.5 h-3.5" /> Add Award
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {awardsList.map((item) => (
+                      <div key={item.id} className="p-4 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] flex items-start justify-between">
+                        <div>
+                          <span className="text-xs font-bold text-[#0F172A] block">{item.title}</span>
+                          <span className="text-[11px] text-[#64748B] block mt-0.5">{item.issuingOrg}</span>
+                          <span className="text-[10px] text-[#2563EB] font-mono font-bold block mt-1">Year: {item.year}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteItem('awards', item.id)}
+                          className="text-red-500 hover:text-red-700 p-1"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
-          {/* ================= RAIL 10: ACTIVITIES (EMPTY STATE) ================= */}
-          {activeRail === 'activities' && renderEmptyState('Extracurricular & Co-curricular Activities', '+ ACTIVITY')}
+          {/* ================= RAIL 10: ACTIVITIES ================= */}
+          {activeRail === 'activities' && (
+            <div className="p-6 flex-1">
+              {activitiesList.length === 0 ? (
+                renderEmptyState('Extracurricular & Co-curricular Activities', '+ ACTIVITY', 'ACTIVITY')
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-[#0F172A]">Student Activities & Leadership</span>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenModal('ACTIVITY')}
+                      className="px-3 py-1.5 rounded-lg bg-[#2563EB] text-white text-xs font-bold flex items-center gap-1"
+                    >
+                      <Plus className="w-3.5 h-3.5" /> Add Activity
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {activitiesList.map((item) => (
+                      <div key={item.id} className="p-4 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] flex items-start justify-between">
+                        <div>
+                          <span className="text-xs font-bold text-[#0F172A] block">{item.title}</span>
+                          <span className="text-[11px] text-[#64748B] block mt-0.5">Role: {item.role}</span>
+                          <span className="text-[10px] text-[#2563EB] font-mono font-bold block mt-1">Year: {item.year}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteItem('activities', item.id)}
+                          className="text-red-500 hover:text-red-700 p-1"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* ================= RAIL 11: PHOTOS & SIGNATURES ================= */}
           {activeRail === 'photos' && (
             <div className="p-6 flex-1 space-y-6 max-w-4xl">
-              {/* Mandatory Orange Instructions Box */}
               <div className="p-4 rounded-xl bg-[#FFFBEB] border-2 border-[#FCD34D] text-[#92400E] shadow-xs">
                 <div className="flex items-center gap-2 mb-2 font-bold text-xs uppercase tracking-wide text-[#B45309]">
                   <AlertTriangle className="w-4 h-4 text-[#D97706] flex-shrink-0" />
@@ -1531,11 +1957,84 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
             </div>
           )}
 
-          {/* ================= RAIL 14: SKILLS (EMPTY STATE) ================= */}
-          {activeRail === 'skills' && renderEmptyState('Skills & Technical Proficiencies', '+ SKILLS')}
+          {/* ================= RAIL 14: SKILLS ================= */}
+          {activeRail === 'skills' && (
+            <div className="p-6 flex-1">
+              {skillsList.length === 0 ? (
+                renderEmptyState('Skills & Technical Proficiencies', '+ SKILLS', 'SKILLS')
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-[#0F172A]">Technical Skills & Certifications</span>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenModal('SKILLS')}
+                      className="px-3 py-1.5 rounded-lg bg-[#2563EB] text-white text-xs font-bold flex items-center gap-1"
+                    >
+                      <Plus className="w-3.5 h-3.5" /> Add Skill
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {skillsList.map((item) => (
+                      <div key={item.id} className="p-4 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] flex items-start justify-between">
+                        <div>
+                          <span className="text-xs font-bold text-[#0F172A] block">{item.name}</span>
+                          <span className="text-[11px] text-[#64748B] block mt-0.5">Domain: {item.category}</span>
+                          <span className="text-[10px] text-[#2563EB] font-bold block mt-1">Level: {item.level}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteItem('skills', item.id)}
+                          className="text-red-500 hover:text-red-700 p-1"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
-          {/* ================= RAIL 15: INTERESTS (EMPTY STATE) ================= */}
-          {activeRail === 'interests' && renderEmptyState('Interests & Co-curricular Pursuits', '+ INTEREST')}
+          {/* ================= RAIL 15: INTERESTS ================= */}
+          {activeRail === 'interests' && (
+            <div className="p-6 flex-1">
+              {interestsList.length === 0 ? (
+                renderEmptyState('Interests & Co-curricular Pursuits', '+ INTEREST', 'INTEREST')
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-[#0F172A]">Co-curricular Interests</span>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenModal('INTEREST')}
+                      className="px-3 py-1.5 rounded-lg bg-[#2563EB] text-white text-xs font-bold flex items-center gap-1"
+                    >
+                      <Plus className="w-3.5 h-3.5" /> Add Interest
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {interestsList.map((item) => (
+                      <div key={item.id} className="p-4 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] flex items-start justify-between">
+                        <div>
+                          <span className="text-xs font-bold text-[#0F172A] block">{item.title}</span>
+                          <span className="text-[11px] text-[#64748B] block mt-0.5">Category: {item.category}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteItem('interests', item.id)}
+                          className="text-red-500 hover:text-red-700 p-1"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* ================= FACULTY RESEARCH & GRANTS ================= */}
           {activeRail === 'research' && isFaculty && (
@@ -1594,6 +2093,295 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           </div>
         </main>
       </div>
+
+      {/* ── Floating Support & Provider Footer ─────────────────────────────────── */}
+      <footer className="mt-8 border-t border-[#E2E8F0] bg-[#F8FAFC] py-4 px-6 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#64748B] print:hidden shadow-xs">
+        {/* Left: Support Button */}
+        <button
+          type="button"
+          onClick={() => setIsSupportModalOpen(true)}
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#CBD5E1] bg-white hover:bg-[#F1F5F9] text-[#0F172A] font-semibold transition-colors cursor-pointer shadow-xs"
+        >
+          <HelpCircle className="w-4 h-4 text-[#0D9488]" />
+          <span>Support & Helpdesk</span>
+        </button>
+
+        {/* Center: Powered By eduplus + Socials */}
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          <span className="font-semibold text-[#0F172A]">
+            Powered By <span className="text-[#2563EB] font-bold">eduplus</span>
+          </span>
+          <span className="hidden sm:inline text-[#CBD5E1]">•</span>
+          <div className="flex items-center gap-2.5 text-[#94A3B8]">
+            <a href="https://youtube.com" target="_blank" rel="noreferrer" title="VIIT YouTube Channel" className="hover:text-[#EF4444] transition-colors">
+              <YoutubeIcon className="w-4 h-4" />
+            </a>
+            <a href="https://facebook.com" target="_blank" rel="noreferrer" title="VIIT Facebook" className="hover:text-[#1877F2] transition-colors">
+              <FacebookIcon className="w-4 h-4" />
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noreferrer" title="VIIT Instagram" className="hover:text-[#E4405F] transition-colors">
+              <InstagramIcon className="w-4 h-4" />
+            </a>
+            <a href="https://x.com" target="_blank" rel="noreferrer" title="VIIT Twitter/X" className="hover:text-[#0F172A] transition-colors">
+              <TwitterIcon className="w-4 h-4" />
+            </a>
+            <a href="https://linkedin.com" target="_blank" rel="noreferrer" title="VIIT LinkedIn" className="hover:text-[#0A66C2] transition-colors">
+              <LinkedinIcon className="w-4 h-4" />
+            </a>
+          </div>
+        </div>
+
+        {/* Right: Version info */}
+        <div className="text-[11px] font-mono text-[#94A3B8]">
+          VIERP Enterprise v4.8 • SPPU Pune
+        </div>
+      </footer>
+
+      {/* ── Modal Dialog for Empty State Creations ───────────────────────────── */}
+      {activeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-in fade-in-0 duration-200">
+          <div className="relative w-full max-w-md bg-white rounded-2xl p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200">
+            <button
+              type="button"
+              onClick={handleCloseModal}
+              className="absolute top-4 right-4 text-[#94A3B8] hover:text-[#0F172A] p-1.5 rounded-lg hover:bg-[#F1F5F9] cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center">
+                <Plus className="w-4 h-4" />
+              </div>
+              <h3 className="text-base font-bold text-[#0F172A]">
+                {activeModal === 'SKILLS' && 'Add Technical Skill'}
+                {activeModal === 'INTEREST' && 'Add Co-curricular Interest'}
+                {activeModal === 'AWARD' && 'Add Award / Recognition'}
+                {activeModal === 'ACTIVITY' && 'Add Student Activity'}
+                {activeModal === 'MEDICAL' && 'Add Medical Clearance Record'}
+                {activeModal === 'DOCUMENTS' && 'Upload Additional Attestation'}
+              </h3>
+            </div>
+
+            <form onSubmit={handleModalSubmit} className="space-y-4">
+              {activeModal === 'SKILLS' && (
+                <>
+                  <VierpInput
+                    label="Skill Title / Technology"
+                    required
+                    placeholder="e.g., Python, System Design, Cloud Architecture"
+                    value={modalFields.name || ''}
+                    onChange={(e) => setModalFields({ ...modalFields, name: e.target.value })}
+                  />
+                  <VierpSelect
+                    label="Proficiency Level"
+                    value={modalFields.level || 'Intermediate'}
+                    onChange={(e) => setModalFields({ ...modalFields, level: e.target.value })}
+                  >
+                    <option value="Beginner">Beginner</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Advanced">Advanced</option>
+                    <option value="Expert">Expert</option>
+                  </VierpSelect>
+                  <VierpInput
+                    label="Domain Category"
+                    placeholder="e.g., Software Engineering, AI/ML, DevOps"
+                    value={modalFields.category || ''}
+                    onChange={(e) => setModalFields({ ...modalFields, category: e.target.value })}
+                  />
+                </>
+              )}
+
+              {activeModal === 'INTEREST' && (
+                <>
+                  <VierpInput
+                    label="Interest / Hobby Title"
+                    required
+                    placeholder="e.g., Autonomous Drones, Open Source, Chess"
+                    value={modalFields.title || ''}
+                    onChange={(e) => setModalFields({ ...modalFields, title: e.target.value })}
+                  />
+                  <VierpInput
+                    label="Domain / Club"
+                    placeholder="e.g., Robotics Club, Sports, Literary Arts"
+                    value={modalFields.category || ''}
+                    onChange={(e) => setModalFields({ ...modalFields, category: e.target.value })}
+                  />
+                </>
+              )}
+
+              {activeModal === 'AWARD' && (
+                <>
+                  <VierpInput
+                    label="Award / Honor Title"
+                    required
+                    placeholder="e.g., Winner - National Smart India Hackathon"
+                    value={modalFields.title || ''}
+                    onChange={(e) => setModalFields({ ...modalFields, title: e.target.value })}
+                  />
+                  <VierpInput
+                    label="Issuing Organization"
+                    required
+                    placeholder="e.g., Ministry of Education / AICTE"
+                    value={modalFields.issuingOrg || ''}
+                    onChange={(e) => setModalFields({ ...modalFields, issuingOrg: e.target.value })}
+                  />
+                  <VierpInput
+                    label="Year of Award"
+                    required
+                    placeholder="e.g., 2024"
+                    value={modalFields.year || ''}
+                    onChange={(e) => setModalFields({ ...modalFields, year: e.target.value })}
+                    className="font-mono"
+                  />
+                </>
+              )}
+
+              {activeModal === 'ACTIVITY' && (
+                <>
+                  <VierpInput
+                    label="Activity / Club Title"
+                    required
+                    placeholder="e.g., Google Developer Student Club (GDSC)"
+                    value={modalFields.title || ''}
+                    onChange={(e) => setModalFields({ ...modalFields, title: e.target.value })}
+                  />
+                  <VierpInput
+                    label="Role / Designation"
+                    required
+                    placeholder="e.g., Lead Organizer / Core Member"
+                    value={modalFields.role || ''}
+                    onChange={(e) => setModalFields({ ...modalFields, role: e.target.value })}
+                  />
+                  <VierpInput
+                    label="Academic Year"
+                    placeholder="e.g., 2023–24"
+                    value={modalFields.year || ''}
+                    onChange={(e) => setModalFields({ ...modalFields, year: e.target.value })}
+                    className="font-mono"
+                  />
+                </>
+              )}
+
+              {activeModal === 'MEDICAL' && (
+                <>
+                  <VierpInput
+                    label="Medical Certificate / Condition"
+                    required
+                    placeholder="e.g., Sports Fitness & Ophthalmic Clearance"
+                    value={modalFields.condition || ''}
+                    onChange={(e) => setModalFields({ ...modalFields, condition: e.target.value })}
+                  />
+                  <VierpInput
+                    label="Attesting Medical Officer"
+                    required
+                    placeholder="e.g., Dr. S. K. Deshmukh (Reg No. 49102)"
+                    value={modalFields.verifiedBy || ''}
+                    onChange={(e) => setModalFields({ ...modalFields, verifiedBy: e.target.value })}
+                  />
+                  <VierpInput
+                    label="Year Verified"
+                    placeholder="2024"
+                    value={modalFields.year || ''}
+                    onChange={(e) => setModalFields({ ...modalFields, year: e.target.value })}
+                    className="font-mono"
+                  />
+                </>
+              )}
+
+              {activeModal === 'DOCUMENTS' && (
+                <>
+                  <VierpInput
+                    label="Document Name"
+                    required
+                    placeholder="e.g., State Level Sports Merit Certificate"
+                    value={modalFields.title || ''}
+                    onChange={(e) => setModalFields({ ...modalFields, title: e.target.value })}
+                  />
+                  <VierpSelect
+                    label="Attestation Format"
+                    value={modalFields.type || 'PDF • Self Attested'}
+                    onChange={(e) => setModalFields({ ...modalFields, type: e.target.value })}
+                  >
+                    <option value="PDF • Self Attested">PDF • Self Attested</option>
+                    <option value="PDF • Gazetted Officer Attested">PDF • Gazetted Officer Attested</option>
+                    <option value="PDF • DigiLocker Verified">PDF • DigiLocker Verified</option>
+                  </VierpSelect>
+                </>
+              )}
+
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#F1F5F9]">
+                <button
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="px-4 py-2 rounded-lg border border-[#CBD5E1] bg-white text-xs font-semibold text-[#475569] hover:bg-[#F8FAFC] cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-semibold shadow-xs cursor-pointer"
+                >
+                  Save & Add Entry
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── Support & Helpdesk Modal Dialog ──────────────────────────────────── */}
+      {isSupportModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-in fade-in-0 duration-200">
+          <div className="relative w-full max-w-md bg-white rounded-2xl p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200">
+            <button
+              type="button"
+              onClick={() => setIsSupportModalOpen(false)}
+              className="absolute top-4 right-4 text-[#94A3B8] hover:text-[#0F172A] p-1.5 rounded-lg hover:bg-[#F1F5F9] cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-[#F0FDFA] border border-[#99F6E4] text-[#0D9488] flex items-center justify-center">
+                <HelpCircle className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-[#0F172A]">VIERP Academic ERP Support</h3>
+                <p className="text-xs text-[#64748B]">Vishwakarma Institute of Information Technology</p>
+              </div>
+            </div>
+
+            <div className="space-y-3 text-xs text-[#334155] border-t border-[#F1F5F9] pt-3">
+              <div className="p-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0]">
+                <strong className="block text-[#0F172A] mb-0.5">Academic Section Window 4</strong>
+                <span>Direct student credential corrections & bank verification window.</span>
+                <span className="block font-mono text-[11px] text-[#2563EB] mt-1">Timings: Mon–Fri, 10:00 AM – 4:00 PM</span>
+              </div>
+
+              <div className="p-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0]">
+                <strong className="block text-[#0F172A] mb-0.5">Telephone Helpdesk</strong>
+                <span className="font-mono text-[#0D9488] font-bold">020-24202180 / 020-24202181</span>
+              </div>
+
+              <div className="p-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0]">
+                <strong className="block text-[#0F172A] mb-0.5">Official ERP Email</strong>
+                <span className="font-mono text-[#2563EB]">support@vierp.in / academic@viit.ac.in</span>
+              </div>
+            </div>
+
+            <div className="mt-5 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setIsSupportModalOpen(false)}
+                className="px-4 py-2 rounded-lg bg-[#0D9488] hover:bg-[#0F766E] text-white text-xs font-semibold cursor-pointer shadow-xs"
+              >
+                Close Support
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Printable Profile Dossier (Activated on window.print()) ─────────── */}
       <div className="hidden print:block font-sans text-black max-w-full p-2">
@@ -1725,38 +2513,19 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                 <td className="p-1 border-r border-black font-mono">98.42 %ile</td>
                 <td className="p-1 font-semibold">Qualified</td>
               </tr>
-              <tr>
-                <td className="p-1 border-r border-black font-semibold">B.Tech Sem I (AY 22–23)</td>
-                <td className="p-1 border-r border-black">SPPU Autonomous Curriculum</td>
-                <td className="p-1 border-r border-black">2022</td>
-                <td className="p-1 border-r border-black font-mono font-bold">SGPA: 9.12</td>
-                <td className="p-1 font-semibold">PASS (Distinction)</td>
-              </tr>
-              <tr>
-                <td className="p-1 border-r border-black font-semibold">B.Tech Sem II (AY 22–23)</td>
-                <td className="p-1 border-r border-black">SPPU Autonomous Curriculum</td>
-                <td className="p-1 border-r border-black">2023</td>
-                <td className="p-1 border-r border-black font-mono font-bold">SGPA: 9.24</td>
-                <td className="p-1 font-semibold">PASS (Distinction)</td>
-              </tr>
-              <tr>
-                <td className="p-1 border-r border-black font-semibold">B.Tech Sem III (AY 23–24)</td>
-                <td className="p-1 border-r border-black">SPPU Autonomous Curriculum</td>
-                <td className="p-1 border-r border-black">2023</td>
-                <td className="p-1 border-r border-black font-mono font-bold">SGPA: 9.18</td>
-                <td className="p-1 font-semibold">PASS (Distinction)</td>
-              </tr>
-              <tr>
-                <td className="p-1 border-r border-black font-semibold">B.Tech Sem IV (AY 23–24)</td>
-                <td className="p-1 border-r border-black">SPPU Autonomous Curriculum</td>
-                <td className="p-1 border-r border-black">2024</td>
-                <td className="p-1 border-r border-black font-mono font-bold">SGPA: 9.20</td>
-                <td className="p-1 font-semibold">PASS (Distinction)</td>
-              </tr>
+              {semesterLedgers.map((sem, idx) => (
+                <tr key={idx}>
+                  <td className="p-1 border-r border-black font-semibold">{sem.sem}</td>
+                  <td className="p-1 border-r border-black">{sem.session}</td>
+                  <td className="p-1 border-r border-black font-mono">{sem.credits} Credits</td>
+                  <td className="p-1 border-r border-black font-mono font-bold">SGPA: {sem.sgpa}</td>
+                  <td className="p-1 font-semibold">{sem.status}</td>
+                </tr>
+              ))}
               <tr className="bg-gray-100 font-bold">
                 <td className="p-1 border-r border-black" colSpan={3}>Cumulative Grade Point Average (CGPA)</td>
-                <td className="p-1 border-r border-black font-mono text-sm font-black">9.18 / 10.0</td>
-                <td className="p-1 text-emerald-800">FIRST CLASS WITH DISTINCTION</td>
+                <td className="p-1 border-r border-black font-mono text-sm font-black">{calculatedCGPA} / 10.0</td>
+                <td className="p-1 text-emerald-800">FIRST CLASS WITH DISTINCTION ({calculatedPercentage}%)</td>
               </tr>
             </tbody>
           </table>

@@ -424,7 +424,7 @@ export default function Header({ currentTime, profile, onNavigate }: HeaderProps
       </div>
 
       {/* Center: Subtle lightning bolt accent icon */}
-      <div className="hidden lg:flex items-center justify-center flex-shrink-0">
+      <div className="flex items-center justify-center flex-shrink-0">
         <div className="w-7 h-7 rounded-full bg-amber-50 border border-amber-200/70 flex items-center justify-center shadow-2xs">
           <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
         </div>

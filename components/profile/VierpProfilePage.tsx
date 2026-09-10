@@ -45,48 +45,6 @@ import {
   Receipt,
 } from 'lucide-react'
 import { FeeReceiptModal } from '@/components/common/FeeReceiptModal'
-
-function YoutubeIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em" {...props}>
-      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-    </svg>
-  )
-}
-
-function FacebookIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em" {...props}>
-      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-    </svg>
-  )
-}
-
-function InstagramIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="1em" height="1em" {...props}>
-      <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
-      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
-    </svg>
-  )
-}
-
-function TwitterIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em" {...props}>
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-    </svg>
-  )
-}
-
-function LinkedinIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em" {...props}>
-      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.65 1.65 0 1 0 0-3.3 1.66 1.66 0 0 0 0 3.3m1.39 9.74v-8.37H5.07v8.37h2.78z"/>
-    </svg>
-  )
-}
 import { cn } from '@/lib/utils'
 import type { StudentProfile } from '@/types/dashboard'
 import type { ActiveView } from '@/components/Sidebar'
@@ -704,7 +662,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
   )
 
   return (
-    <div className="w-full pb-28">
+    <div className="w-full pb-8">
       {/* Toast Notification */}
       {toastMsg && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#0F172A] text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-[#334155] animate-in fade-in slide-in-from-bottom-5">
@@ -2574,44 +2532,6 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           </div>
         </main>
       </div>
-
-      {/* ── Docked Institutional Footer (Solid Blue Bar) ─────────────────────────── */}
-      <footer className="fixed bottom-0 left-0 right-0 z-30 bg-[#1E40AF] text-white py-2 px-4 flex items-center justify-between shadow-lg text-xs print:hidden">
-        {/* Left: Green rounded pill (?) Support */}
-        <button
-          type="button"
-          onClick={() => setIsSupportModalOpen(true)}
-          className="bg-[#059669] hover:bg-[#047857] text-white text-xs font-bold rounded-full px-3 py-1.5 inline-flex items-center gap-1.5 shadow-xs transition-all cursor-pointer active:scale-95"
-        >
-          <HelpCircle className="w-3.5 h-3.5 text-white" />
-          <span>(?) Support</span>
-        </button>
-
-        {/* Center: White text "Powered By eduplus" */}
-        <div className="flex items-center gap-1 text-white font-medium">
-          <span>Powered By</span>
-          <span className="font-extrabold tracking-tight">eduplus</span>
-        </div>
-
-        {/* Right: White circular social icons */}
-        <div className="flex items-center gap-2.5 text-white">
-          <a href="https://youtube.com" target="_blank" rel="noreferrer" title="YouTube" className="w-6 h-6 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors">
-            <YoutubeIcon className="w-3.5 h-3.5 text-white" />
-          </a>
-          <a href="https://facebook.com" target="_blank" rel="noreferrer" title="Facebook" className="w-6 h-6 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors">
-            <FacebookIcon className="w-3.5 h-3.5 text-white" />
-          </a>
-          <a href="https://instagram.com" target="_blank" rel="noreferrer" title="Instagram" className="w-6 h-6 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors">
-            <InstagramIcon className="w-3.5 h-3.5 text-white" />
-          </a>
-          <a href="https://x.com" target="_blank" rel="noreferrer" title="Twitter/X" className="w-6 h-6 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors">
-            <TwitterIcon className="w-3.5 h-3.5 text-white" />
-          </a>
-          <a href="https://linkedin.com" target="_blank" rel="noreferrer" title="LinkedIn" className="w-6 h-6 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors">
-            <LinkedinIcon className="w-3.5 h-3.5 text-white" />
-          </a>
-        </div>
-      </footer>
 
       {/* ── Modal Dialog for Empty State Creations ───────────────────────────── */}
       {activeModal && (

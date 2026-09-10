@@ -24,6 +24,7 @@ import {
   Radio,
 } from 'lucide-react'
 import type { EnrolledSubject, StudentProfile } from '@/types/dashboard'
+import { useRealtimeChat, useRealtimeConnection } from '@/hooks/useRealtime'
 
 interface Sender {
   id: string
@@ -162,6 +163,7 @@ export default function ChatView({ enrolledSubjects, profile }: ChatViewProps) {
   const [activeChannelId, setActiveChannelId] = useState<string>('channel-te-comp-div-a')
   const [activeInstructorId, setActiveInstructorId] = useState<string>(FACULTY_MENTORS[0].id)
   const [instructors, setInstructors] = useState<FacultyContact[]>(FACULTY_MENTORS)
+  const connectionStatus = useRealtimeConnection()
 
   // Messages & Stream State
   const [messages, setMessages] = useState<ApiMessage[]>([])
@@ -261,6 +263,58 @@ export default function ChatView({ enrolledSubjects, profile }: ChatViewProps) {
   useEffect(() => {
     scrollToBottom(true)
   }, [messages.length])
+
+  // Real-time Chat Subscription
+  useRealtimeChat({
+    channelId: chatMode === 'channel' ? activeChannel.id : undefined,
+    contactId: chatMode === 'direct' ? activeInstructor.id : undefined,
+    onMessage: (event) => {
+      const incoming = event.message
+      setMessages((prev) => {
+        const exists = prev.some(
+          (m) =>
+            m.id === incoming.id ||
+            (m.isOptimistic && m.senderId === incoming.senderId && m.content === incoming.content)
+        )
+        if (exists) {
+          return prev.map((m) =>
+            m.id === incoming.id ||
+            (m.isOptimistic && m.senderId === incoming.senderId && m.content === incoming.content)
+              ? {
+                  id: incoming.id,
+                  content: incoming.content,
+                  fileUrl: incoming.fileUrl,
+                  createdAt: incoming.createdAt,
+                  senderId: incoming.senderId,
+                  sender: {
+                    id: incoming.senderId,
+                    name: incoming.senderName,
+                    role: incoming.senderName.startsWith('Prof.') ? 'FACULTY' : 'STUDENT',
+                    email: '',
+                  },
+                }
+              : m
+          )
+        }
+
+        const newMsg: ApiMessage = {
+          id: incoming.id,
+          content: incoming.content,
+          fileUrl: incoming.fileUrl,
+          createdAt: incoming.createdAt,
+          senderId: incoming.senderId,
+          sender: {
+            id: incoming.senderId,
+            name: incoming.senderName,
+            role: incoming.senderName.startsWith('Prof.') ? 'FACULTY' : 'STUDENT',
+            email: '',
+          },
+        }
+        return [...prev, newMsg]
+      })
+      setTimeout(() => scrollToBottom(true), 50)
+    },
+  })
 
   // Handle message submission with Optimistic UI update
   const handleSendMessage = async (e?: React.FormEvent) => {
@@ -549,11 +603,33 @@ export default function ChatView({ enrolledSubjects, profile }: ChatViewProps) {
           )}
 
           <div className="flex items-center gap-3">
+            {/* Live SSE Stream Badge */}
+            <div
+              className={`hidden sm:inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-0.5 rounded-full border shadow-2xs ${
+                connectionStatus === 'CONNECTED'
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                  : connectionStatus === 'CONNECTING'
+                  ? 'bg-amber-50 text-amber-700 border-amber-200'
+                  : 'bg-slate-50 text-slate-500 border-slate-200'
+              }`}
+            >
+              <span
+                className={`w-1.5 h-1.5 rounded-full ${
+                  connectionStatus === 'CONNECTED'
+                    ? 'bg-emerald-500 animate-pulse'
+                    : connectionStatus === 'CONNECTING'
+                    ? 'bg-amber-500 animate-ping'
+                    : 'bg-slate-400'
+                }`}
+              />
+              <span>{connectionStatus === 'CONNECTED' ? 'Live Stream' : connectionStatus}</span>
+            </div>
+
             <button
               type="button"
               onClick={loadMessages}
               title="Refresh messages"
-              className="text-[#94A3B8] hover:text-[#0D9488] p-1.5 rounded-lg hover:bg-[#F8FAFC] transition-colors"
+              className="text-[#94A3B8] hover:text-[#0D9488] p-1.5 rounded-lg hover:bg-[#F8FAFC] transition-colors cursor-pointer"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loadingMessages ? 'animate-spin text-[#0D9488]' : ''}`} />
             </button>

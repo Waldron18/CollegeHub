@@ -32,6 +32,8 @@ import UserProfileModal from '@/components/profile/UserProfileModal'
 import ChangePasswordModal from '@/components/common/ChangePasswordModal'
 import VirtualIdCardModal from '@/components/common/VirtualIdCardModal'
 import SignOutConfirmModal from '@/components/common/SignOutConfirmModal'
+import { useRealtimeNotification, useRealtimeConnection } from '@/hooks/useRealtime'
+import type { NotificationPayload } from '@/lib/eventBus'
 
 export interface AcademicNotification {
   id: string
@@ -183,7 +185,30 @@ export default function Header({ currentTime, profile, onNavigate }: HeaderProps
       : DEFAULT_STUDENT_NOTIFICATIONS
 
   const [notifications, setNotifications] = useState<AcademicNotification[]>(initialNotifications)
+  const [realtimeToast, setRealtimeToast] = useState<{ title: string; message: string } | null>(null)
+  const connectionStatus = useRealtimeConnection()
   const popoverRef = useRef<HTMLDivElement>(null)
+
+  // Real-time SSE Notification listener
+  useRealtimeNotification((payload: NotificationPayload) => {
+    const newAcademicNotif: AcademicNotification = {
+      id: payload.id || `notif-${Date.now()}`,
+      title: payload.title,
+      message: payload.message,
+      timestamp: 'Just now',
+      category: (payload.type?.toUpperCase() as any) || 'GRADE',
+      tagColor: payload.type === 'GRADE' ? 'emerald' : payload.type === 'CIRCULAR' ? 'blue' : 'purple',
+      read: false,
+      targetView: payload.type === 'GRADE' ? 'voip' : 'home',
+      actionHint: 'View in Portal',
+    }
+
+    setNotifications((prev) => [newAcademicNotif, ...prev])
+    setRealtimeToast({ title: payload.title, message: payload.message })
+    setTimeout(() => {
+      setRealtimeToast(null)
+    }, 5000)
+  })
 
   // Profile Menu and Modals State
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
@@ -857,6 +882,33 @@ export default function Header({ currentTime, profile, onNavigate }: HeaderProps
         userName={displayName}
         userEmail={userEmail}
       />
+
+      {/* Real-Time Notification Toast */}
+      {realtimeToast && (
+        <div className="fixed top-16 right-6 z-50 bg-[#0F172A] text-white px-4 py-3 rounded-2xl shadow-2xl flex items-start gap-3 border border-[#334155] animate-in fade-in slide-in-from-top-4 duration-200 max-w-sm">
+          <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <Bell className="w-4 h-4 animate-bounce" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
+              <span>{realtimeToast.title}</span>
+              <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-normal">
+                LIVE
+              </span>
+            </h4>
+            <p className="text-[11px] text-[#94A3B8] mt-0.5 leading-snug line-clamp-2">
+              {realtimeToast.message}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setRealtimeToast(null)}
+            className="text-[#64748B] hover:text-white p-1 cursor-pointer"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
     </header>
   )
 }

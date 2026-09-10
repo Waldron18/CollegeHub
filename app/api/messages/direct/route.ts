@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getAuthUser } from '@/lib/auth'
+import { publishChatMessage } from '@/lib/eventBus'
 
 export async function GET(req: NextRequest) {
   try {
@@ -196,6 +197,18 @@ export async function POST(req: NextRequest) {
             prnNumber: true,
           },
         },
+      },
+    })
+
+    publishChatMessage({
+      receiverId: recipientId,
+      message: {
+        id: message.id,
+        content: message.content,
+        fileUrl: message.fileUrl,
+        senderId: message.senderId,
+        senderName: message.sender.name,
+        createdAt: message.createdAt.toISOString(),
       },
     })
 

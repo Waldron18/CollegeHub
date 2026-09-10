@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getAuthUser } from '@/lib/auth'
+import { publishNotification } from '@/lib/eventBus'
 
 export async function GET() {
   try {
@@ -201,7 +202,25 @@ export async function PATCH(request: NextRequest) {
         feedback: feedback ? String(feedback).trim() : null,
         feedbackDate: grade || feedback ? new Date() : null,
       },
+      include: {
+        assignment: {
+          select: {
+            title: true,
+          },
+        },
+      },
     })
+
+    if (updated.studentId) {
+      publishNotification(updated.studentId, {
+        id: `notif-${Date.now()}`,
+        title: 'Grade Published',
+        message: `Your submission for "${updated.assignment?.title || 'Assignment'}" has been evaluated: ${updated.grade || 'Graded'}`,
+        type: 'GRADE',
+        createdAt: new Date().toISOString(),
+        read: false,
+      })
+    }
 
     return NextResponse.json({
       success: true,

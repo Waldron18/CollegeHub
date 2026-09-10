@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getAuthUser } from '@/lib/auth'
+import { publishChatMessage } from '@/lib/eventBus'
 
 /**
  * Resolves channel by id, name, or slug
@@ -151,6 +152,19 @@ export async function POST(
             prnNumber: true,
           },
         },
+      },
+    })
+
+    publishChatMessage({
+      channelId: channel.id,
+      message: {
+        id: message.id,
+        content: message.content,
+        fileUrl: message.fileUrl,
+        senderId: message.senderId,
+        senderName: message.sender.name,
+        createdAt: message.createdAt.toISOString(),
+        channelId: channel.id,
       },
     })
 

@@ -704,7 +704,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
   )
 
   return (
-    <div className="w-full pb-16">
+    <div className="w-full pb-28">
       {/* Toast Notification */}
       {toastMsg && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#0F172A] text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-[#334155] animate-in fade-in slide-in-from-bottom-5">
@@ -945,7 +945,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           {activeRail === 'personal' && (
             <div className="flex-1 flex flex-col">
               {/* Top Horizontal Sub-Tabs */}
-              <div className="rounded-t-2xl border border-b-0 border-[#BFDBFE] bg-gradient-to-r from-[#BFDBFE] via-[#DBEAFE] to-[#EFF6FF] p-1 flex items-center gap-1 overflow-x-auto">
+              <div className="rounded-t-2xl border border-b-0 border-[#BFDBFE] bg-gradient-to-r from-[#BFDBFE] via-[#DBEAFE] to-[#EFF6FF] p-1.5 flex items-center gap-1 overflow-x-auto">
                 {[
                   { id: 'personal_details', label: 'PERSONAL DETAILS' },
                   { id: 'identity', label: 'IDENTITY' },
@@ -962,8 +962,8 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                     onClick={() => setPersonalSubTab(tab.id as any)}
                     className={cn(
                       personalSubTab === tab.id
-                        ? 'bg-white text-[#0F172A] rounded-t-xl font-extrabold px-4 py-2.5 text-[11px] tracking-wide whitespace-nowrap shadow-none'
-                        : 'text-[#1E3A8A] text-[11px] font-bold tracking-wide uppercase px-4 py-2.5 whitespace-nowrap'
+                        ? 'bg-white text-[#0F172A] font-extrabold text-[11px] tracking-wide px-4 py-2.5 rounded-t-xl whitespace-nowrap shadow-none border-b-0 -mb-[1px]'
+                        : 'text-[#1E3A8A] text-[11px] font-bold tracking-wide uppercase px-4 py-2.5 whitespace-nowrap hover:text-[#002B9A]'
                     )}
                   >
                     {tab.label}
@@ -1203,7 +1203,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           {/* ================= RAIL 2: CONTACT & ADDRESS ================= */}
           {activeRail === 'address' && (
             <div className="flex-1 flex flex-col">
-              <div className="rounded-t-2xl border border-b-0 border-[#BFDBFE] bg-gradient-to-r from-[#BFDBFE] via-[#DBEAFE] to-[#EFF6FF] p-1 flex items-center gap-1 overflow-x-auto">
+              <div className="rounded-t-2xl border border-b-0 border-[#BFDBFE] bg-gradient-to-r from-[#BFDBFE] via-[#DBEAFE] to-[#EFF6FF] p-1.5 flex items-center gap-1 overflow-x-auto">
                 {[
                   { id: 'permanent', label: 'PERMANENT ADDRESS' },
                   { id: 'current', label: 'CURRENT ADDRESS' },
@@ -1215,8 +1215,8 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                     onClick={() => setAddressSubTab(tab.id as any)}
                     className={cn(
                       addressSubTab === tab.id
-                        ? 'bg-white text-[#0F172A] rounded-t-xl font-extrabold px-4 py-2.5 text-[11px] tracking-wide whitespace-nowrap shadow-none'
-                        : 'text-[#1E3A8A] text-[11px] font-bold tracking-wide uppercase px-4 py-2.5 whitespace-nowrap'
+                        ? 'bg-white text-[#0F172A] font-extrabold text-[11px] tracking-wide px-4 py-2.5 rounded-t-xl whitespace-nowrap shadow-none border-b-0 -mb-[1px]'
+                        : 'text-[#1E3A8A] text-[11px] font-bold tracking-wide uppercase px-4 py-2.5 whitespace-nowrap hover:text-[#002B9A]'
                     )}
                   >
                     {tab.label}
@@ -1326,7 +1326,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           {/* ================= RAIL 3: FAMILY DETAILS ================= */}
           {activeRail === 'family' && (
             <div className="flex-1 flex flex-col">
-              <div className="rounded-t-2xl border border-b-0 border-[#BFDBFE] bg-gradient-to-r from-[#BFDBFE] via-[#DBEAFE] to-[#EFF6FF] p-1 flex items-center gap-1 overflow-x-auto">
+              <div className="rounded-t-2xl border border-b-0 border-[#BFDBFE] bg-gradient-to-r from-[#BFDBFE] via-[#DBEAFE] to-[#EFF6FF] p-1.5 flex items-center gap-1 overflow-x-auto">
                 {[
                   { id: 'father', label: "FATHER'S DETAILS" },
                   { id: 'mother', label: "MOTHER'S DETAILS" },
@@ -1339,8 +1339,8 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                     onClick={() => setFamilySubTab(tab.id as any)}
                     className={cn(
                       familySubTab === tab.id
-                        ? 'bg-white text-[#0F172A] rounded-t-xl font-extrabold px-4 py-2.5 text-[11px] tracking-wide whitespace-nowrap shadow-none'
-                        : 'text-[#1E3A8A] text-[11px] font-bold tracking-wide uppercase px-4 py-2.5 whitespace-nowrap'
+                        ? 'bg-white text-[#0F172A] font-extrabold text-[11px] tracking-wide px-4 py-2.5 rounded-t-xl whitespace-nowrap shadow-none border-b-0 -mb-[1px]'
+                        : 'text-[#1E3A8A] text-[11px] font-bold tracking-wide uppercase px-4 py-2.5 whitespace-nowrap hover:text-[#002B9A]'
                     )}
                   >
                     {tab.label}
@@ -1384,7 +1384,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           {/* ================= RAIL 4: EDUCATION & ACADEMICS ================= */}
           {activeRail === 'education' && (
             <div className="flex-1 flex flex-col">
-              <div className="rounded-t-2xl border border-b-0 border-[#BFDBFE] bg-gradient-to-r from-[#BFDBFE] via-[#DBEAFE] to-[#EFF6FF] p-1 flex items-center gap-1 overflow-x-auto">
+              <div className="rounded-t-2xl border border-b-0 border-[#BFDBFE] bg-gradient-to-r from-[#BFDBFE] via-[#DBEAFE] to-[#EFF6FF] p-1.5 flex items-center gap-1 overflow-x-auto">
                 {[
                   { id: 'ssc', label: 'SSC/10TH MARKS' },
                   { id: 'hsc', label: 'HSC/12TH MARKS' },
@@ -1398,8 +1398,8 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                     onClick={() => setEducationSubTab(tab.id as any)}
                     className={cn(
                       educationSubTab === tab.id
-                        ? 'bg-white text-[#0F172A] rounded-t-xl font-extrabold px-4 py-2.5 text-[11px] tracking-wide whitespace-nowrap shadow-none'
-                        : 'text-[#1E3A8A] text-[11px] font-bold tracking-wide uppercase px-4 py-2.5 whitespace-nowrap'
+                        ? 'bg-white text-[#0F172A] font-extrabold text-[11px] tracking-wide px-4 py-2.5 rounded-t-xl whitespace-nowrap shadow-none border-b-0 -mb-[1px]'
+                        : 'text-[#1E3A8A] text-[11px] font-bold tracking-wide uppercase px-4 py-2.5 whitespace-nowrap hover:text-[#002B9A]'
                     )}
                   >
                     {tab.label}
@@ -1581,7 +1581,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           {/* ================= RAIL 5: BANK DETAILS (LOCKED INPUTS) ================= */}
           {activeRail === 'bank' && (
             <div className="flex-1 flex flex-col">
-              <div className="rounded-t-2xl border border-b-0 border-[#BFDBFE] bg-gradient-to-r from-[#BFDBFE] via-[#DBEAFE] to-[#EFF6FF] p-1 flex items-center gap-1 overflow-x-auto">
+              <div className="rounded-t-2xl border border-b-0 border-[#BFDBFE] bg-gradient-to-r from-[#BFDBFE] via-[#DBEAFE] to-[#EFF6FF] p-1.5 flex items-center gap-1 overflow-x-auto">
                 {[
                   { id: 'bank_info', label: 'STUDENT BANK INFORMATION' },
                   { id: 'loan', label: 'LOAN DETAILS' },
@@ -1593,8 +1593,8 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                     onClick={() => setBankSubTab(tab.id as any)}
                     className={cn(
                       bankSubTab === tab.id
-                        ? 'bg-white text-[#0F172A] rounded-t-xl font-extrabold px-4 py-2.5 text-[11px] tracking-wide whitespace-nowrap shadow-none'
-                        : 'text-[#1E3A8A] text-[11px] font-bold tracking-wide uppercase px-4 py-2.5 whitespace-nowrap'
+                        ? 'bg-white text-[#0F172A] font-extrabold text-[11px] tracking-wide px-4 py-2.5 rounded-t-xl whitespace-nowrap shadow-none border-b-0 -mb-[1px]'
+                        : 'text-[#1E3A8A] text-[11px] font-bold tracking-wide uppercase px-4 py-2.5 whitespace-nowrap hover:text-[#002B9A]'
                     )}
                   >
                     {tab.label}
@@ -1605,10 +1605,10 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
               <div className="p-6 flex-1">
                 {bankSubTab === 'bank_info' && (
                   <div className="space-y-4 max-w-2xl">
-                    <div className="p-3.5 rounded-xl bg-[#FEF3C7] border border-[#FDE68A] text-xs text-[#92400E] flex items-center gap-2.5">
+                    <div className="rounded-lg border border-[#FCD34D] bg-[#FFFBEB] p-3 text-xs text-[#92400E] flex items-center gap-2.5">
                       <Lock className="w-4 h-4 flex-shrink-0 text-amber-700" />
                       <span>
-                        Bank details are securely locked by the College Accounts Department. To request modification, submit verified bank passbook copy at Academic Section Window 4.
+                        Bank details are securely locked by the College Accounts Department. To request modification, submit verified bank passbook copy (showing account number, IFSC code, and account holder name) at Academic Section Window 4.
                       </span>
                     </div>
 
@@ -1747,14 +1747,14 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           {/* ================= RAIL 7: DOCUMENT UPLOADS ================= */}
           {activeRail === 'documents' && (
             <div className="flex-1 flex flex-col">
-              <div className="rounded-t-2xl border border-b-0 border-[#BFDBFE] bg-gradient-to-r from-[#BFDBFE] via-[#DBEAFE] to-[#EFF6FF] p-1 flex items-center gap-1 overflow-x-auto">
+              <div className="rounded-t-2xl border border-b-0 border-[#BFDBFE] bg-gradient-to-r from-[#BFDBFE] via-[#DBEAFE] to-[#EFF6FF] p-1.5 flex items-center gap-1 overflow-x-auto">
                 <button
                   type="button"
                   onClick={() => setDocumentSubTab('verified_docs')}
                   className={cn(
                     documentSubTab === 'verified_docs'
-                      ? 'bg-white text-[#0F172A] rounded-t-xl font-extrabold px-4 py-2.5 text-[11px] tracking-wide whitespace-nowrap shadow-none'
-                      : 'text-[#1E3A8A] text-[11px] font-bold tracking-wide uppercase px-4 py-2.5 whitespace-nowrap'
+                      ? 'bg-white text-[#0F172A] font-extrabold text-[11px] tracking-wide px-4 py-2.5 rounded-t-xl whitespace-nowrap shadow-none border-b-0 -mb-[1px]'
+                      : 'text-[#1E3A8A] text-[11px] font-bold tracking-wide uppercase px-4 py-2.5 whitespace-nowrap hover:text-[#002B9A]'
                   )}
                 >
                   VERIFIED ADMISSION DOCUMENTS
@@ -1764,8 +1764,8 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
                   onClick={() => setDocumentSubTab('additional_docs')}
                   className={cn(
                     documentSubTab === 'additional_docs'
-                      ? 'bg-white text-[#0F172A] rounded-t-xl font-extrabold px-4 py-2.5 text-[11px] tracking-wide whitespace-nowrap shadow-none'
-                      : 'text-[#1E3A8A] text-[11px] font-bold tracking-wide uppercase px-4 py-2.5 whitespace-nowrap'
+                      ? 'bg-white text-[#0F172A] font-extrabold text-[11px] tracking-wide px-4 py-2.5 rounded-t-xl whitespace-nowrap shadow-none border-b-0 -mb-[1px]'
+                      : 'text-[#1E3A8A] text-[11px] font-bold tracking-wide uppercase px-4 py-2.5 whitespace-nowrap hover:text-[#002B9A]'
                   )}
                 >
                   ADDITIONAL ATTESTATIONS
@@ -2129,19 +2129,19 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
           {/* ================= RAIL 11: PHOTOS & SIGNATURES ================= */}
           {activeRail === 'photos' && (
             <div className="p-6 flex-1 space-y-6 max-w-4xl">
-              <div className="p-4 rounded-xl bg-[#FEF9C3] border border-[#FACC15] text-[#854D0E] shadow-xs">
-                <div className="flex items-center gap-1.5 mb-2 font-bold text-xs text-[#854D0E]">
-                  <AlertTriangle className="w-4 h-4 text-[#CA8A04] flex-shrink-0" />
-                  <span>Photo Upload Instructions :</span>
+              <div className="rounded-lg border border-[#FCD34D] bg-[#FFFBEB] p-3 text-xs text-[#92400E]">
+                <div className="flex items-center gap-1.5 mb-2 font-bold text-xs text-[#92400E]">
+                  <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                  <span>Photo Upload Instructions </span>
                   <button
                     type="button"
                     onClick={() => alert('Sample Photo Guidelines: Front-facing formal portrait with neutral expression, plain white background, and both ears visible.')}
                     className="text-[#2563EB] hover:underline font-bold text-xs cursor-pointer inline-flex items-center gap-1"
                   >
-                    (Sample Photo)
+                    :(Sample Photo)
                   </button>
                 </div>
-                <ul className="text-xs space-y-1.5 pl-6 list-disc font-medium text-[#713F12]">
+                <ul className="text-xs space-y-1.5 pl-6 list-disc font-medium text-[#92400E]">
                   <li>Photo Should be in .jpg/.jpeg format only.</li>
                   <li>Resolution should be W=350px, H=450px. Photo size &lt;= 500 Kb.</li>
                   <li>The photo must be taken within the last 6 months in full color.</li>
@@ -2576,7 +2576,7 @@ export default function VierpProfilePage({ profile, onNavigate }: VierpProfilePa
       </div>
 
       {/* ── Docked Institutional Footer (Solid Blue Bar) ─────────────────────────── */}
-      <footer className="mt-8 bg-[#1E40AF] text-white py-2.5 px-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3 text-xs print:hidden shadow-md">
+      <footer className="fixed bottom-0 left-0 right-0 z-30 bg-[#1E40AF] text-white py-2 px-4 flex items-center justify-between shadow-lg text-xs print:hidden">
         {/* Left: Green rounded pill (?) Support */}
         <button
           type="button"

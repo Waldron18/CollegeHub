@@ -27,6 +27,7 @@ import {
   Shield,
   WifiOff,
   Power,
+  Lock,
 } from 'lucide-react'
 import type { StudentProfile } from '@/types/dashboard'
 import type { ActiveView } from '@/components/Sidebar'
@@ -720,7 +721,7 @@ export default function Header({ currentTime, profile, onNavigate }: HeaderProps
         </div>
 
         {/* Profile Dropdown Utility */}
-        <div className="relative" ref={profileMenuRef}>
+        <div ref={profileMenuRef}>
           <button
             type="button"
             onClick={() => setIsProfileMenuOpen((prev) => !prev)}
@@ -751,36 +752,34 @@ export default function Header({ currentTime, profile, onNavigate }: HeaderProps
             />
           </button>
 
-          {/* Profile Dropdown Menu */}
+          {/* Profile Dropdown Menu Card */}
           {isProfileMenuOpen && (
-            <div className="absolute right-0 top-full mt-2 w-72 rounded-2xl bg-white border border-[#E2E8F0] shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="absolute right-2 top-14 w-72 bg-white rounded-xl shadow-2xl border border-slate-200 p-4 z-50 animate-in fade-in zoom-in-95 duration-150">
               {/* Header User Card */}
-              <div className="p-4 bg-[#F8FAFC] border-b border-[#E2E8F0]">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#1E3A8A] flex items-center justify-center text-white font-bold text-sm shadow-sm flex-shrink-0">
-                    {initials}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-xs font-bold text-[#0F172A] uppercase tracking-wide truncate leading-tight">
-                      {profile?.role === 'ADMIN'
-                        ? 'ADMINISTRATOR'
-                        : profile?.role === 'FACULTY'
-                        ? (profile?.name || 'PROF. RAJESH KULKARNI').toUpperCase()
-                        : (profile?.name || 'ADITYA SHARMA').toUpperCase()}
-                    </h4>
-                    <p className="text-[11px] text-[#64748B] truncate leading-tight mt-0.5 font-mono">
-                      {profile?.role === 'ADMIN'
-                        ? 'admin@college.edu'
-                        : profile?.role === 'FACULTY'
-                        ? (profile?.email || 'rajesh.kulkarni@college.edu')
-                        : (profile?.email || 'aditya@college.edu')}
-                    </p>
-                  </div>
+              <div className="flex items-center gap-3 pb-3 border-b border-slate-100 mb-3">
+                <div className="w-10 h-10 rounded-full bg-[#1E3A8A] flex items-center justify-center text-white font-bold text-sm shadow-sm flex-shrink-0 border-2 border-white ring-1 ring-slate-200">
+                  {initials}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-sm font-bold text-[#3B49A2] uppercase tracking-tight truncate leading-tight">
+                    {profile?.role === 'ADMIN'
+                      ? 'ADMINISTRATOR'
+                      : profile?.role === 'FACULTY'
+                      ? (profile?.name || 'PROF. RAJESH KULKARNI').toUpperCase()
+                      : (profile?.name || 'ADITYA SHARMA').toUpperCase()}
+                  </h4>
+                  <p className="text-xs text-slate-500 truncate leading-tight mt-0.5 font-mono">
+                    {profile?.role === 'ADMIN'
+                      ? 'admin@college.edu'
+                      : profile?.role === 'FACULTY'
+                      ? (profile?.email || 'rajesh.kulkarni@college.edu')
+                      : (profile?.email || 'aditya@college.edu')}
+                  </p>
                 </div>
               </div>
 
               {/* Action Items */}
-              <div className="p-1.5 space-y-0.5">
+              <div className="space-y-1">
                 {/* 1. User Profile with blue user icon */}
                 <button
                   type="button"
@@ -792,7 +791,7 @@ export default function Header({ currentTime, profile, onNavigate }: HeaderProps
                       router.push('/dashboard/profile')
                     }
                   }}
-                  className="w-full px-3 py-2 rounded-xl text-left hover:bg-[#F8FAFC] flex items-center justify-between group transition-colors cursor-pointer"
+                  className="w-full px-2.5 py-2 rounded-lg text-left hover:bg-[#F8FAFC] flex items-center justify-between group transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-2.5">
                     <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center transition-colors">
@@ -803,36 +802,37 @@ export default function Header({ currentTime, profile, onNavigate }: HeaderProps
                   <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-blue-600 transition-colors" />
                 </button>
 
-                {/* 2. Change Password with circular lock/key icon */}
+                {/* 2. Change Password with padlock with refresh/circular arrow */}
                 <button
                   type="button"
                   onClick={() => {
                     setIsProfileMenuOpen(false)
                     setIsChangePasswordOpen(true)
                   }}
-                  className="w-full px-3 py-2 rounded-xl text-left hover:bg-[#F8FAFC] flex items-center justify-between group transition-colors cursor-pointer"
+                  className="w-full px-2.5 py-2 rounded-lg text-left hover:bg-[#F8FAFC] flex items-center justify-between group transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center transition-colors">
-                      <KeyRound className="w-3.5 h-3.5" />
+                    <div className="w-7 h-7 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center transition-colors relative">
+                      <Lock className="w-3.5 h-3.5" />
+                      <RotateCcw className="w-2 h-2 absolute -bottom-0.5 -right-0.5 text-slate-600" />
                     </div>
                     <span className="text-xs font-semibold text-[#0F172A] block leading-tight">Change Password</span>
                   </div>
                   <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-blue-600 transition-colors" />
                 </button>
 
-                {/* 3. Virtual ID Card with student badge icon */}
+                {/* 3. Virtual ID Card with ID badge with lanyard */}
                 <button
                   type="button"
                   onClick={() => {
                     setIsProfileMenuOpen(false)
                     setIsVirtualIdOpen(true)
                   }}
-                  className="w-full px-3 py-2 rounded-xl text-left hover:bg-[#F8FAFC] flex items-center justify-between group transition-colors cursor-pointer"
+                  className="w-full px-2.5 py-2 rounded-lg text-left hover:bg-[#F8FAFC] flex items-center justify-between group transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-2.5">
                     <div className="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center transition-colors">
-                      <Shield className="w-3.5 h-3.5" />
+                      <CreditCard className="w-3.5 h-3.5" />
                     </div>
                     <span className="text-xs font-semibold text-[#0F172A] block leading-tight">Virtual ID Card</span>
                   </div>
@@ -841,17 +841,17 @@ export default function Header({ currentTime, profile, onNavigate }: HeaderProps
               </div>
 
               {/* Divider */}
-              <div className="border-t border-[#F1F5F9] my-1" />
+              <div className="border-t border-slate-100 my-2" />
 
               {/* 4. Log Out with red power button icon */}
-              <div className="p-1.5">
+              <div>
                 <button
                   type="button"
                   onClick={() => {
                     setIsProfileMenuOpen(false)
                     setIsSignOutConfirmOpen(true)
                   }}
-                  className="w-full px-3 py-2 rounded-xl text-left hover:bg-[#FEF2F2] flex items-center justify-between group transition-colors cursor-pointer text-[#DC2626]"
+                  className="w-full px-2.5 py-2 rounded-lg text-left hover:bg-[#FEF2F2] flex items-center justify-between group transition-colors cursor-pointer text-[#DC2626]"
                 >
                   <div className="flex items-center gap-2.5">
                     <div className="w-7 h-7 rounded-lg bg-red-50 text-[#DC2626] flex items-center justify-center transition-colors">
